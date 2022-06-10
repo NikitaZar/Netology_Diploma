@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Netology_Diploma</string>
+    <string name="welcome_text">Добро пожаловать!</string>
+    <string name="login">Логин</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="authorisation_introduction">Введите Ваш логин и пароль:</string>
+    <string name="pass">Пароль</string>
+    <string name="sign_in">Вход</string>
+    <string name="not_registered_yet_text">Ещё не зарегистрированы?</string>
+    <string name="registration">Регистрация</string>
+    <string name="name">Имя</string>
+    <string name="confirm_pass">Подтверждение пароля</string>
+    <string name="pass_different">Пароли не совпадают</string>
+</resources>
