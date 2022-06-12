@@ -12,4 +12,8 @@
     <string name="name">Name</string>
     <string name="confirm_pass">Confirm pass</string>
     <string name="pass_different">Passwords are different</string>
+    <string name="empty_posts">There are no posts...</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_remove">Remove</string>
+
 </resources>

@@ -48,7 +48,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-base:18.0.1'
+
     def core_version = "1.8.0"
     def appcompat_version = "1.4.2"
     def constraintlayout_version = "2.1.4"
@@ -65,6 +65,8 @@ dependencies {
     def coroutines_version = "1.4.1"
     def swipe_refresh_layout_version = "1.1.0"
     def firebase_version = "29.0.4"
+    def play_service_version = "18.0.1"
+    def paging_version = "3.1.1"
 
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
@@ -93,5 +95,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-
+    implementation "com.google.android.gms:play-services-base:$play_service_version"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 }

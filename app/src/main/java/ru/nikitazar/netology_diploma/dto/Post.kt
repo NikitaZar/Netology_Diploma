@@ -8,5 +8,5 @@ data class Post(
     val content: String = "",
     val published: String = "",
     val coords: Coords = Coords(0F, 0F),
-    val attachment: Attachment
+    val attachment: Attachment? = null
 )
