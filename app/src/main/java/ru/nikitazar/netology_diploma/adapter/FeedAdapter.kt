@@ -54,11 +54,12 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            like.isChecked = ownedByMe
+            like.isChecked = post.likedByMe
+            likeCnt.text = post.likeOwnerIds.size.toString()
             attachment.isVisible = false
 
             val avatarUrl = "${BuildConfig.BASE_URL}avatars/${post.authorAvatar}"
-            avatar.loadCircleCrop(avatarUrl)
+            avatar.loadCircleCrop(avatarUrl, R.drawable.ic_empty_avatar)
 
             post.attachment?.let { postAttachment ->
                 val attachmentUrl = "${BuildConfig.BASE_URL}media/${postAttachment.url}"

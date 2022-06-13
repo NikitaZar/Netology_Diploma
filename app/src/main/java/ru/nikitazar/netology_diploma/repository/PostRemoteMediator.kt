@@ -1,5 +1,6 @@
 package ru.nikitazar.netology_diploma.repository
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -26,8 +27,9 @@ class PostRemoteMediator @Inject constructor(
         try {
             val response = when (loadType) {
                 LoadType.REFRESH -> service.getLatest(state.config.initialLoadSize)
-                LoadType.PREPEND -> {//TODO enable auto PREPEND
-                    return MediatorResult.Success(true)
+                LoadType.PREPEND -> {
+                    val firstId = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
+                    service.getAfter(firstId, state.config.pageSize)
                 }
                 LoadType.APPEND -> {
                     val lastId = postRemoteKeyDao.min() ?: return MediatorResult.Success(false)
@@ -71,10 +73,14 @@ class PostRemoteMediator @Inject constructor(
                     }
                 }
             }
-            postDao.insert(body.map(PostEntity::fromDto))
+            val list = body.map{PostEntity.fromDto(it)}
+            Log.i("Mediator posts", body.toString())
+            Log.i("Mediator entities", list.toString())
+            postDao.insert(body.map{PostEntity.fromDto(it)})
 
             return MediatorResult.Success(body.isEmpty())
         } catch (e: Exception) {
+            Log.i("Mediator error", e.message.toString())
             return MediatorResult.Error(e)
         }
     }

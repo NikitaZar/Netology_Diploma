@@ -5,29 +5,44 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Post
+import java.lang.StringBuilder
+
+const val LIST_DELIMITER = ","
 
 @Entity
 data class PostEntity(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Long,
     val authorId: Long = 0,
     val author: String = "",
-    val authorAvatar: String = "",
+    val authorAvatar: String? = "",
     val content: String = "",
     val published: String = "",
-    val coordsLat: Float = 0F,
-    val coordsLong: Float = 0F,
+    @Embedded
+    val coords: Coords = Coords(0F, 0F),
+    val link: String?,
+    val mentionIds: String = "",
+    val mentionedMe: Boolean = false,
+    val likeOwnerIds: String = "",
+    val likedByMe: Boolean = false,
     @Embedded
     var attachment: AttachmentEmbeddable?,
 ) {
-    fun toDto() = Post(id,
+    fun toDto() = Post(
+        id,
         authorId,
         author,
         authorAvatar,
         content,
         published,
-        Coords(coordsLat, coordsLong),
-        attachment?.toDto())
+        coords,
+        link,
+        mentionIds.toDto(),
+        mentionedMe,
+        likeOwnerIds.toDto(),
+        likedByMe,
+        attachment?.toDto()
+    )
 
     companion object {
         fun fromDto(dto: Post) =
@@ -38,8 +53,12 @@ data class PostEntity(
                 dto.authorAvatar,
                 dto.content,
                 dto.published,
-                dto.coords.lat,
-                dto.coords.long,
+                dto.coords,
+                dto.link,
+                dto.mentionIds.fromDto(),
+                dto.mentionedMe,
+                dto.likeOwnerIds.fromDto(),
+                dto.likedByMe,
                 AttachmentEmbeddable.fromDto(dto.attachment)
             )
     }
@@ -48,3 +67,20 @@ data class PostEntity(
 fun List<PostEntity>.toDto() = map { it.toDto() }
 
 fun List<Post>.toEntity() = map { PostEntity.fromDto(it) }
+
+@JvmName("toEntityLong")
+fun List<Long>.fromDto(): String {
+    val sb = StringBuilder()
+    forEach {
+        sb.append(it)
+        sb.append(LIST_DELIMITER)
+    }
+    return sb.toString()
+}
+
+fun String.toDto(): List<Long> {
+    if (this == ""){
+        return emptyList()
+    }
+    return this.split(LIST_DELIMITER).map { it.toLong() }
+}

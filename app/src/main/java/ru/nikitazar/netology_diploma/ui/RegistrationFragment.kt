@@ -17,12 +17,17 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.databinding.FragmentRegistrationBinding
+import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 
 @AndroidEntryPoint
 class RegistrationFragment : Fragment() {
 
     private val postViewModel: PostViewModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
+
+    private val authViewModel: AuthViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
 
@@ -90,7 +95,6 @@ class RegistrationFragment : Fragment() {
                     when (pass == confirmPass) {
                         true -> {
                             postViewModel.registerUser(login, pass, name)
-                            // findNavController().navigateUp()
                         }
                         false -> Snackbar.make(
                             binding.root,
@@ -109,6 +113,12 @@ class RegistrationFragment : Fragment() {
                     return@observe
                 }
                 binding.avatar.setImageURI(it.uri)
+            }
+        }
+
+        authViewModel.data.observe(viewLifecycleOwner) {
+            if (it.id != 0L) {
+                findNavController().navigate(R.id.action_registrationFragment_to_feedFragment)
             }
         }
 

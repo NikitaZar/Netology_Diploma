@@ -41,16 +41,7 @@ class PostViewModel @Inject constructor(
 
     @SuppressLint("SimpleDateFormat")
     val data: Flow<PagingData<Post>> = auth.authStateFlow
-        .flatMapLatest {
-            cached.map {
-                it.map { post ->
-                    post.copy(
-                        published = SimpleDateFormat("dd.MM.yy HH:mm:ss")
-                            .format(post.published.toLong() * 1000L)
-                    )
-                }
-            }
-        }
+        .flatMapLatest { cached } //TODO convert time format
 
     private val noPhoto = PhotoModel()
 
