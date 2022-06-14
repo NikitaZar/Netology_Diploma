@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.nikitazar.netology_diploma.R
@@ -17,6 +19,7 @@ import ru.nikitazar.netology_diploma.adapter.OnInteractionListener
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.FragmentFeedBinding
 import ru.nikitazar.netology_diploma.dto.Post
+import ru.nikitazar.netology_diploma.ui.EditPostFragment.Companion.textArg
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 import javax.inject.Inject
@@ -47,15 +50,18 @@ class FeedFragment : Fragment() {
         val adapter = FeedAdapter(
             object : OnInteractionListener {
                 override fun onEdit(post: Post) {
-                    //TODO
+                    postViewModel.edit(post)
                 }
 
                 override fun onLike(post: Post) {
-                    //TODO
+                    when (post.likedByMe) {
+                        true -> postViewModel.dislikeById(post.id)
+                        false -> postViewModel.likeById(post.id)
+                    }
                 }
 
                 override fun onRemove(post: Post) {
-                    //TODO
+                    postViewModel.removeById(post.id)
                 }
 
                 override fun onFullscreenAttachment(attachmentUrl: String) {
@@ -71,8 +77,17 @@ class FeedFragment : Fragment() {
             postViewModel.data.collectLatest(adapter::submitData)
         }
 
+        postViewModel.dataState.observe(viewLifecycleOwner) { dataState ->
+            binding.progress.isVisible = dataState.loading
+
+            if (dataState.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok){}.show()
+            }
+        }
+
         binding.fab.setOnClickListener {
-            //TODO navigate to create
+            findNavController().navigate(R.id.action_feedFragment_to_editPostFragment)
         }
 
         setFragmentResultListener("reqUpdate") { _, bundle ->
@@ -86,6 +101,14 @@ class FeedFragment : Fragment() {
             adapter.refresh()
             binding.list.smoothScrollToPosition(0)
             binding.fabNewer.hide()
+        }
+
+        postViewModel.edited.observe(viewLifecycleOwner) { post ->
+            if (post.id != 0L) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_editPostFragment,
+                    Bundle().apply { textArg = post.content })
+            }
         }
 
         return binding.root

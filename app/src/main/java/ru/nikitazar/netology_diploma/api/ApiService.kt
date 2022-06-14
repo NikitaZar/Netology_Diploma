@@ -4,21 +4,15 @@ import okhttp3.Interceptor
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.nikitazar.netology_diploma.BuildConfig
 import ru.nikitazar.netology_diploma.dto.AuthState
+import ru.nikitazar.netology_diploma.dto.Media
 import ru.nikitazar.netology_diploma.dto.Post
 import ru.nikitazar.netology_diploma.dto.PushToken
-
-private val logging = HttpLoggingInterceptor().apply {
-    if (BuildConfig.DEBUG) {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-}
 
 fun okhttp(vararg interceptors: Interceptor): OkHttpClient = OkHttpClient.Builder()
     .apply {
@@ -98,8 +92,8 @@ interface ApiService {
         @Query("count") count: Int
     ): Response<List<Post>>
 
-//        @Multipart
-//        @POST("media")
-//        suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
+        @Multipart
+        @POST("media")
+        suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
 
 }

@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class PostRemoteMediator @Inject constructor(
-    private val service: ApiService,
+    private val apiService: ApiService,
     private val postDao: PostDao,
     private val postRemoteKeyDao: PostRemoteKeyDao,
     private val db: AppDb
@@ -26,14 +26,14 @@ class PostRemoteMediator @Inject constructor(
     override suspend fun load(loadType: LoadType, state: PagingState<Int, PostEntity>): MediatorResult {
         try {
             val response = when (loadType) {
-                LoadType.REFRESH -> service.getLatest(state.config.initialLoadSize)
+                LoadType.REFRESH -> apiService.getLatest(state.config.initialLoadSize)
                 LoadType.PREPEND -> {
                     val firstId = postRemoteKeyDao.max() ?: return MediatorResult.Success(false)
-                    service.getAfter(firstId, state.config.pageSize)
+                    apiService.getAfter(firstId, state.config.pageSize)
                 }
                 LoadType.APPEND -> {
                     val lastId = postRemoteKeyDao.min() ?: return MediatorResult.Success(false)
-                    service.getBefore(lastId, state.config.pageSize)
+                    apiService.getBefore(lastId, state.config.pageSize)
                 }
             }
 
