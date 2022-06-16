@@ -42,7 +42,7 @@ class AuthFragment : Fragment() {
 
             authViewModel.data.observe(viewLifecycleOwner) {
                 if (it.id != 0L) {
-                    findNavController().navigate(R.id.action_authFragment_to_feedFragment)
+                    findNavController().navigate(R.id.action_authFragment_to_homeFragment)
                 }
             }
 

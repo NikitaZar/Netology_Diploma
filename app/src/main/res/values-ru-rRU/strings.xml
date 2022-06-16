@@ -17,4 +17,6 @@
     <string name="menu_remove">Удалить</string>
     <string name="remove">Удалить</string>
     <string name="error_loading">Что-то пошло не так. Попробуйте позже...</string>
+    <string name="posts">Посты</string>
+    <string name="events">События</string>
 </resources>

@@ -18,4 +18,6 @@
     <string name="ok" translatable="false">OK</string>
     <string name="error_loading">Something went wrong. Try again later</string>
     <string name="menu_remove">Remove</string>
+    <string name="posts">Posts</string>
+    <string name="events">Events</string>
 </resources>
