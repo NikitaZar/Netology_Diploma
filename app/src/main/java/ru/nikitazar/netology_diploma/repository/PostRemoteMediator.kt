@@ -80,7 +80,7 @@ class PostRemoteMediator @Inject constructor(
 
             return MediatorResult.Success(body.isEmpty())
         } catch (e: Exception) {
-            Log.i("Mediator error", e.message.toString())
+            Log.e("Mediator error", e.message.toString())
             return MediatorResult.Error(e)
         }
     }

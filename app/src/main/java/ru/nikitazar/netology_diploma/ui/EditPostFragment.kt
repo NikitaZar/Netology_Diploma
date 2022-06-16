@@ -3,9 +3,11 @@ package ru.nikitazar.netology_diploma.ui
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.os.bundleOf
@@ -48,8 +50,8 @@ class EditPostFragment : Fragment() {
             false
         )
 
-        arguments?.textArg
-            ?.let(binding.edit::setText)
+        arguments?.textArg?.let(binding.edit::setText)
+        binding.edit.requestFocus()
 
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -68,7 +70,7 @@ class EditPostFragment : Fragment() {
                 }
             }
 
-        binding.pickPhoto.setOnClickListener {
+        binding.takeImage.setOnClickListener {
             ImagePicker.with(this)
                 .crop()
                 .compress(2048)
@@ -94,21 +96,26 @@ class EditPostFragment : Fragment() {
             postVewModel.changePhoto(null, null)
         }
 
-        binding.ok.setOnClickListener {
-            postVewModel.changeContent(binding.edit.text.toString())
-            postVewModel.save()
-            AndroidUtils.hideKeyboard(requireView())
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+            postVewModel.cancelEdit()
             findNavController().navigateUp()
         }
 
-        postVewModel.postCreated.observe(viewLifecycleOwner)
-        {
+        binding.ok.setOnClickListener {
+            postVewModel.changeContent(binding.edit.text.toString())
+            postVewModel.save()
+            postVewModel.cancelEdit()
+            AndroidUtils.hideKeyboard(requireView())
+            findNavController().navigateUp()
+            Log.i("edited", "Edit")
+        }
+
+        postVewModel.postCreated.observe(viewLifecycleOwner) {
             val reqUpdateNew = true
             setFragmentResult("reqUpdate", bundleOf("reqUpdateNew" to reqUpdateNew))
         }
 
-        postVewModel.photo.observe(viewLifecycleOwner)
-        {
+        postVewModel.photo.observe(viewLifecycleOwner) {
             if (it.uri == null) {
                 binding.photoContainer.visibility = View.GONE
                 return@observe
@@ -118,8 +125,7 @@ class EditPostFragment : Fragment() {
             binding.photo.setImageURI(it.uri)
         }
 
-        authViewModel.data.observe(viewLifecycleOwner)
-        {
+        authViewModel.data.observe(viewLifecycleOwner) {
             if (authViewModel.data.value?.id == 0L) {
                 findNavController().navigateUp()
             }

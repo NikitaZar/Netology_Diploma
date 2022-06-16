@@ -12,10 +12,10 @@ fun ImageView.load(url: String, vararg transforms: BitmapTransformation = emptyA
         .transform(*transforms)
         .into(this)
 
-fun ImageView.loadCircleCrop(url: String, placeholderId: Int, vararg transforms: BitmapTransformation = emptyArray()) =
+fun ImageView.loadCircleCrop(url: String, placeholderId: Int) =
     Glide.with(this)
         .load(url)
         .timeout(10_000)
-        .transform(*transforms)
+        .transform(CircleCrop())
         .placeholder(placeholderId)
         .into(this)

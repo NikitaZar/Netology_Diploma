@@ -60,7 +60,7 @@
             app:layout_anchor="@id/bottomAppBar">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/pickPhoto"
+                android:id="@+id/takePhoto"
                 style="@style/Widget.AppTheme.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 app:icon="@drawable/ic_photo_camera_black_48dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/takePhoto"
+                android:id="@+id/takeImage"
                 style="@style/Widget.AppTheme.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

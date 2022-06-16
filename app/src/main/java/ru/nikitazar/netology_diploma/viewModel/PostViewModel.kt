@@ -31,7 +31,7 @@ import java.util.*
 import javax.inject.Inject
 
 private val empty = Post(
-    id=0,
+    id = 0,
     authorId = 0,
     author = "",
     authorAvatar = "",
@@ -49,7 +49,6 @@ private val empty = Post(
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val repository: PostRepository,
     private val auth: AppAuth,
     private val calendar: Calendar,
@@ -82,6 +81,10 @@ class PostViewModel @Inject constructor(
     val avatar: LiveData<PhotoModel>
         get() = _avatar
 
+    fun cancelEdit() = viewModelScope.launch {
+        edited.value = empty
+    }
+
     fun save() = viewModelScope.launch {
         try {
             edited.value?.let { post ->
@@ -102,14 +105,14 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun edit(post: Post) {
+    fun edit(post: Post) = viewModelScope.launch {
         edited.value = post
     }
 
-    fun changeContent(content: String) {
+    fun changeContent(content: String) = viewModelScope.launch {
         val text = content.trim()
         if (edited.value?.content == text) {
-            return
+            return@launch
         }
         edited.value = edited.value?.copy(content = text, published = calendar.time.time.toString())
     }
@@ -141,11 +144,11 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun changePhoto(uri: Uri?, file: File?) {
+    fun changePhoto(uri: Uri?, file: File?) = viewModelScope.launch {
         _photo.value = PhotoModel(uri, file)
     }
 
-    fun changeAvatar(uri: Uri?) {
+    fun changeAvatar(uri: Uri?) = viewModelScope.launch {
         _avatar.value = PhotoModel(uri, uri?.toFile())
     }
 

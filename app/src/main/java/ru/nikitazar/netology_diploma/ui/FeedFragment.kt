@@ -1,6 +1,7 @@
 package ru.nikitazar.netology_diploma.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -104,6 +105,7 @@ class FeedFragment : Fragment() {
         }
 
         postViewModel.edited.observe(viewLifecycleOwner) { post ->
+            Log.i("edited", "Feed")
             if (post.id != 0L) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_editPostFragment,
