@@ -102,8 +102,7 @@ class EditPostFragment : Fragment() {
         }
 
         binding.ok.setOnClickListener {
-            postVewModel.changeContent(binding.edit.text.toString())
-            postVewModel.save()
+            postVewModel.save(binding.edit.text.toString())
             postVewModel.cancelEdit()
             AndroidUtils.hideKeyboard(requireView())
             findNavController().navigateUp()

@@ -1,7 +1,6 @@
 package ru.nikitazar.netology_diploma.viewModel
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toFile
@@ -11,11 +10,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.dto.Coords
@@ -27,6 +27,7 @@ import ru.nikitazar.netology_diploma.model.PhotoModel
 import ru.nikitazar.netology_diploma.repository.PostRepository
 import ru.nikitazar.netology_diploma.utils.SingleLiveEvent
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -61,23 +62,39 @@ class PostViewModel @Inject constructor(
 
     @SuppressLint("SimpleDateFormat")
     val data: Flow<PagingData<Post>> = auth.authStateFlow
-        .flatMapLatest { cached } //TODO convert time format
+        .flatMapLatest {
+            cached.map { pagingData ->
+                pagingData.map { post ->
+                    post.copy(published = convertTimeFormat(post.published))
+                }
+            }
+        }
 
+    private fun convertTimeFormat(ts: String): String {
+        return try {
+            val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                .parse(ts.replace("T", " ").replace("Z", ""))
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)
+        } catch (e: Exception) {
+            Log.e("convertTimeFormat", ts)
+            ts
+        }
+    }
 
     val dataState: LiveData<FeedModelState>
         get() = _dataState
-
     val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
+
     val postCreated: LiveData<Unit>
         get() = _postCreated
-
     private val noPhoto = PhotoModel()
     private val _photo = MutableLiveData(noPhoto)
+
     val photo: LiveData<PhotoModel>
         get() = _photo
-
     private val _avatar = MutableLiveData(noPhoto)
+
     val avatar: LiveData<PhotoModel>
         get() = _avatar
 
@@ -85,8 +102,9 @@ class PostViewModel @Inject constructor(
         edited.value = empty
     }
 
-    fun save() = viewModelScope.launch {
+    fun save(content: String) = viewModelScope.launch {
         try {
+            changeContent(content)
             edited.value?.let { post ->
                 when (_photo.value) {
                     noPhoto -> repository.save(post, false)
@@ -109,10 +127,10 @@ class PostViewModel @Inject constructor(
         edited.value = post
     }
 
-    fun changeContent(content: String) = viewModelScope.launch {
+    private fun changeContent(content: String) {
         val text = content.trim()
         if (edited.value?.content == text) {
-            return@launch
+            return
         }
         edited.value = edited.value?.copy(content = text, published = calendar.time.time.toString())
     }

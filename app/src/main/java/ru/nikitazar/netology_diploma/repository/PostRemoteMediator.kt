@@ -10,6 +10,7 @@ import ru.nikitazar.netology_diploma.api.ApiService
 import ru.nikitazar.netology_diploma.dao.PostDao
 import ru.nikitazar.netology_diploma.dao.PostRemoteKeyDao
 import ru.nikitazar.netology_diploma.db.AppDb
+import ru.nikitazar.netology_diploma.entity.RemoteKeyType
 import ru.nikitazar.netology_diploma.entity.PostEntity
 import ru.nikitazar.netology_diploma.entity.PostRemoteKeyEntity
 import ru.nikitazar.netology_diploma.errors.ApiError
@@ -52,23 +53,23 @@ class PostRemoteMediator @Inject constructor(
                         when (db.postRemoteKeyDao().isEmpty()) {
                             true -> postRemoteKeyDao.insert(
                                 listOf(
-                                    PostRemoteKeyEntity(PostRemoteKeyEntity.KeyType.BEFORE, body.last().id),
-                                    PostRemoteKeyEntity(PostRemoteKeyEntity.KeyType.AFTER, body.first().id),
+                                    PostRemoteKeyEntity(RemoteKeyType.BEFORE, body.last().id),
+                                    PostRemoteKeyEntity(RemoteKeyType.AFTER, body.first().id),
                                 )
                             )
                             false -> postRemoteKeyDao.insert(
-                                PostRemoteKeyEntity(PostRemoteKeyEntity.KeyType.BEFORE, body.last().id),
+                                PostRemoteKeyEntity(RemoteKeyType.BEFORE, body.last().id),
                             )
                         }
                     }
                     LoadType.APPEND -> {
                         postRemoteKeyDao.insert(
-                            PostRemoteKeyEntity(PostRemoteKeyEntity.KeyType.BEFORE, body.last().id),
+                            PostRemoteKeyEntity(RemoteKeyType.BEFORE, body.last().id),
                         )
                     }
                     LoadType.PREPEND -> {
                         postRemoteKeyDao.insert(
-                            PostRemoteKeyEntity(PostRemoteKeyEntity.KeyType.AFTER, body.first().id),
+                            PostRemoteKeyEntity(RemoteKeyType.AFTER, body.first().id),
                         )
                     }
                 }

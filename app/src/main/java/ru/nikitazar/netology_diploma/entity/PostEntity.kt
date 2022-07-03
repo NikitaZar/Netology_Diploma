@@ -1,13 +1,10 @@
 package ru.nikitazar.netology_diploma.entity
 
-import android.util.Log
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Post
-import java.lang.NumberFormatException
-import java.lang.StringBuilder
 
 const val LIST_DELIMITER = ','
 
@@ -70,21 +67,3 @@ fun List<PostEntity>.toDto() = map { it.toDto() }
 
 fun List<Post>.toEntity() = map { PostEntity.fromDto(it) }
 
-@JvmName("toEntityLong")
-fun List<Long>.fromDto(): String {
-    val sb = StringBuilder()
-    for (i in 0 until this.size) {
-        sb.append(this[i])
-        if (i < this.size - 1) {
-            sb.append(LIST_DELIMITER)
-        }
-    }
-    return sb.toString()
-}
-
-fun String.toDto(): List<Long> {
-    if (this == "") {
-        return emptyList()
-    }
-    return this.split(LIST_DELIMITER).map { it.toLong() }
-}
