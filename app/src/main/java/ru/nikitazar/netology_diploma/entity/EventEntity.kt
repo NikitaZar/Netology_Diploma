@@ -24,8 +24,8 @@ data class EventEntity(
     val participantsIds: String = "",
     val participatedByMe: Boolean = false,
     @Embedded
-    val attachment: Attachment? = null,
-    val link: String? = null
+    var attachment: Attachment?,
+    var link: String?
 ) {
     fun toDto() = Event(
         id,

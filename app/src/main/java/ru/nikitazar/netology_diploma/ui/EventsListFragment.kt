@@ -10,22 +10,26 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import ru.nikitazar.netology_diploma.R
+import ru.nikitazar.netology_diploma.databinding.FragmentEventsListBinding
 
 class EventsListFragment : Fragment() {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val navController = findNavController()
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-
-        view.findViewById<Toolbar>(R.id.toolbar)
-            .setupWithNavController(navController, appBarConfiguration)
-    }
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        val navController = findNavController()
+//        val appBarConfiguration = AppBarConfiguration(navController.graph)
+//
+//        view.findViewById<Toolbar>(R.id.toolbar)
+//            .setupWithNavController(navController, appBarConfiguration)
+//    }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-        return inflater.inflate(R.layout.fragment_events_list, container, false)
+        val binding = FragmentEventsListBinding.inflate(inflater, container, false)
+
+        return binding.root
     }
 }

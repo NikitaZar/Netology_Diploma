@@ -118,7 +118,7 @@ class RegistrationFragment : Fragment() {
 
         authViewModel.data.observe(viewLifecycleOwner) {
             if (it.id != 0L) {
-                findNavController().navigate(R.id.action_registrationFragment_to_feedFragment)
+                findNavController().navigate(R.id.action_registrationFragment_to_homeFragment)
             }
         }
 
