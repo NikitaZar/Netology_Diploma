@@ -19,4 +19,12 @@
     <string name="error_loading">Что-то пошло не так. Попробуйте позже...</string>
     <string name="posts">Посты</string>
     <string name="events">События</string>
+    <string name="event">Событие</string>
+    <string name="author">Автор</string>
+    <string name="time">Время</string>
+    <string name="format">Формат</string>
+    <string name="speaker">Спикер</string>
+    <string name="speakers">Спикеры</string>
+    <string name="participants">Участники</string>
+    <string name="link">Ссылка</string>
 </resources>
