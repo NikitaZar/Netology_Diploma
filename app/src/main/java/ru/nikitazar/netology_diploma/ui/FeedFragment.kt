@@ -95,21 +95,8 @@ class FeedFragment : Fragment() {
             findNavController().navigate(R.id.action_feedFragment_to_editPostFragment)
         }
 
-        setFragmentResultListener("reqUpdate") { _, bundle ->
-            val reqUpdateNew = bundle.getBoolean("reqUpdateNew")
-            if (reqUpdateNew) {
-                adapter.refresh()
-            }
-        }
-
-        binding.fabNewer.setOnClickListener {
-            adapter.refresh()
-            binding.list.smoothScrollToPosition(0)
-            binding.fabNewer.hide()
-        }
-
         postViewModel.edited.observe(viewLifecycleOwner) { post ->
-            Log.i("edited", "Feed")
+            adapter.refresh()
             if (post.id != 0L) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_editPostFragment,

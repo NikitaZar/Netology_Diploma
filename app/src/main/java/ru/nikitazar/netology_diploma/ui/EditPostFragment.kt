@@ -103,15 +103,11 @@ class EditPostFragment : Fragment() {
 
         binding.ok.setOnClickListener {
             postVewModel.save(binding.edit.text.toString())
-            postVewModel.cancelEdit()
             AndroidUtils.hideKeyboard(requireView())
-            findNavController().navigateUp()
-            Log.i("edited", "Edit")
         }
 
         postVewModel.postCreated.observe(viewLifecycleOwner) {
-            val reqUpdateNew = true
-            setFragmentResult("reqUpdate", bundleOf("reqUpdateNew" to reqUpdateNew))
+            findNavController().navigateUp()
         }
 
         postVewModel.photo.observe(viewLifecycleOwner) {
