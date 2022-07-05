@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Netology_Diploma</string>
+    <string name="google_play_unavailable" translatable="false">Google Api Unavailable</string>
+    <string name="welcome_text">Welcome!</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="authorisation_introduction">Enter your login and password:</string>
+    <string name="pass">Пароль</string>
+    <string name="sign_in">Sign In</string>
+    <string name="not_registered_yet_text">Not registered yet?</string>
+    <string name="registration">Registration</string>
+    <string name="name">Name</string>
+    <string name="confirm_pass">Confirm pass</string>
+    <string name="pass_different">Passwords are different</string>
+    <string name="empty_posts">There are no posts...</string>
+    <string name="menu_edit">Edit</string>
+    <string name="remove">Remove</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="error_loading">Something went wrong. Try again later</string>
+    <string name="menu_remove">Remove</string>
+    <string name="posts">Posts</string>
+    <string name="events">Events</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
