@@ -1,4 +1,4 @@
-package ru.nikitazar.netology_diploma.repository
+package ru.nikitazar.netology_diploma.repository.postRepository
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +17,4 @@ interface PostRepository {
     suspend fun getPostById(id: Long): Post
     suspend fun getMaxId(): Long
     suspend fun uploadMedia(upload: MediaUpload): Media
-    suspend fun updateUser(login: String, pass: String): AuthState
-    suspend fun registerUser(login: String, pass: String, name: String): AuthState
-    suspend fun registerWithPhoto(login: String, pass: String, name: String, upload: MediaUpload): AuthState
 }

@@ -27,4 +27,7 @@
     <string name="speakers">Спикеры</string>
     <string name="participants">Участники</string>
     <string name="link">Ссылка</string>
+    <string name="no_events">Событий пока чт нет...</string>
+    <string name="posts_item_name">Посты</string>
+    <string name="events_item_name">События</string>
 </resources>

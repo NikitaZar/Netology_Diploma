@@ -37,7 +37,7 @@ class AuthFragment : Fragment() {
             btSignIn.setOnClickListener {
                 val login = login.text.toString()
                 val pass = password.text.toString()
-                postViewModel.updateUser(login, pass)
+                authViewModel.updateUser(login, pass)
             }
 
             authViewModel.data.observe(viewLifecycleOwner) {

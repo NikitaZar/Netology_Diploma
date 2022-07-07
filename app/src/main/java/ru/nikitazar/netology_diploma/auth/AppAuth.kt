@@ -15,10 +15,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import ru.nikitazar.netology_diploma.api.ApiService
+import ru.nikitazar.netology_diploma.api.AuthApiService
 import ru.nikitazar.netology_diploma.dto.PushToken
 import ru.nikitazar.netology_diploma.model.AuthState
-import javax.inject.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class AppAuth @Inject constructor(
@@ -52,7 +53,7 @@ class AppAuth @Inject constructor(
     @InstallIn(SingletonComponent::class)
     @EntryPoint
     interface AppAuthEntryPoint {
-        fun apiService(): ApiService
+        fun apiService(): AuthApiService
     }
 
     @Synchronized
@@ -76,7 +77,7 @@ class AppAuth @Inject constructor(
         sendPushToken()
     }
 
-    private fun getApiService(context: Context): ApiService {
+    private fun getApiService(context: Context): AuthApiService {
         val hiltEntryPoint = EntryPointAccessors.fromApplication(
             context,
             AppAuthEntryPoint::class.java

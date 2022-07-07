@@ -1,4 +1,4 @@
-package ru.nikitazar.netology_diploma.repository
+package ru.nikitazar.netology_diploma.repository.postRepository
 
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
@@ -6,7 +6,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import ru.nikitazar.netology_diploma.api.ApiService
+import ru.nikitazar.netology_diploma.api.PostApiService
 import ru.nikitazar.netology_diploma.dao.PostDao
 import ru.nikitazar.netology_diploma.dao.PostRemoteKeyDao
 import ru.nikitazar.netology_diploma.db.AppDb
@@ -15,10 +15,11 @@ import ru.nikitazar.netology_diploma.entity.PostEntity
 import ru.nikitazar.netology_diploma.entity.PostRemoteKeyEntity
 import ru.nikitazar.netology_diploma.errors.ApiError
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @OptIn(ExperimentalPagingApi::class)
 class PostRemoteMediator @Inject constructor(
-    private val apiService: ApiService,
+    private val apiService: PostApiService,
     private val postDao: PostDao,
     private val postRemoteKeyDao: PostRemoteKeyDao,
     private val db: AppDb

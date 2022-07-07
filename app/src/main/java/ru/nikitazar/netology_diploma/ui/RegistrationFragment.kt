@@ -50,7 +50,7 @@ class RegistrationFragment : Fragment() {
                     }
                     Activity.RESULT_OK -> {
                         val uri: Uri? = it.data?.data
-                        postViewModel.changeAvatar(uri)
+                        authViewModel.changeAvatar(uri)
                     }
                 }
             }
@@ -78,7 +78,7 @@ class RegistrationFragment : Fragment() {
         }
 
         binding.removePhoto.setOnClickListener {
-            postViewModel.changeAvatar(null)
+            authViewModel.changeAvatar(null)
         }
 
         with(binding) {
@@ -94,7 +94,7 @@ class RegistrationFragment : Fragment() {
                 ) {
                     when (pass == confirmPass) {
                         true -> {
-                            postViewModel.registerUser(login, pass, name)
+                            authViewModel.registerUser(login, pass, name)
                         }
                         false -> Snackbar.make(
                             binding.root,
@@ -105,7 +105,7 @@ class RegistrationFragment : Fragment() {
                 }
             }
 
-            postViewModel.avatar.observe(viewLifecycleOwner) {
+            authViewModel.avatar.observe(viewLifecycleOwner) {
                 if (it.uri == null) {
                     val emptyAvatarDrawable =
                         ResourcesCompat.getDrawable(resources, R.drawable.ic_empty_avatar, null)
