@@ -10,9 +10,7 @@ import ru.nikitazar.netology_diploma.api.EventApiService
 import ru.nikitazar.netology_diploma.dao.EventDao
 import ru.nikitazar.netology_diploma.dto.*
 import ru.nikitazar.netology_diploma.entity.EventEntity
-import ru.nikitazar.netology_diploma.entity.PostEntity
 import ru.nikitazar.netology_diploma.errors.*
-import ru.nikitazar.netology_diploma.repository.postRepository.PostRepository
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -85,7 +83,7 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun uploadMedia(upload: MediaUpload): Media {
+    override suspend fun uploadMedia(upload: MediaUpload): Attachment {
         try {
             val media = MultipartBody.Part.createFormData(
                 "file", upload.file.name, upload.file.asRequestBody()
@@ -93,7 +91,8 @@ class EventRepositoryImpl @Inject constructor(
 
             val response = apiService.upload(media)
             checkResponse(response)
-            return response.body() ?: throw ApiError(response.code(), response.message())
+            val mediaResponse = response.body() ?: throw ApiError(response.code(), response.message())
+            return Attachment(mediaResponse.url, AttachmentType.IMAGE)
         } catch (e: IOException) {
             throw NetworkException
         } catch (e: Exception) {
@@ -103,9 +102,9 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun saveWithAttachment(event: Event, upload: MediaUpload, retry: Boolean) {
         try {
-            val media = uploadMedia(upload)
-            val postWithAttachment = event.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
-            save(postWithAttachment, retry)
+            val attachment = uploadMedia(upload)
+            val eventWithAttachment = event.copy(attachment = attachment)
+            save(eventWithAttachment, retry)
         } catch (e: AppError) {
             throw e
         } catch (e: IOException) {

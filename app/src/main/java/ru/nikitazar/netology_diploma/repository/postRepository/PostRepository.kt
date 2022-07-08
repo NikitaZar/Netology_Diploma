@@ -2,10 +2,7 @@ package ru.nikitazar.netology_diploma.repository.postRepository
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import ru.nikitazar.netology_diploma.dto.AuthState
-import ru.nikitazar.netology_diploma.dto.Media
-import ru.nikitazar.netology_diploma.dto.MediaUpload
-import ru.nikitazar.netology_diploma.dto.Post
+import ru.nikitazar.netology_diploma.dto.*
 
 interface PostRepository {
     val data: Flow<PagingData<Post>>
@@ -16,5 +13,5 @@ interface PostRepository {
     suspend fun saveWithAttachment(post: Post, upload: MediaUpload, retry: Boolean)
     suspend fun getPostById(id: Long): Post
     suspend fun getMaxId(): Long
-    suspend fun uploadMedia(upload: MediaUpload): Media
+    suspend fun uploadMedia(upload: MediaUpload): Attachment
 }

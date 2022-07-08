@@ -1,5 +1,6 @@
 package ru.nikitazar.netology_diploma.repository.postRepository
 
+import android.util.Log
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -86,15 +87,15 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun uploadMedia(upload: MediaUpload): Media {
+    override suspend fun uploadMedia(upload: MediaUpload): Attachment {
         try {
             val media = MultipartBody.Part.createFormData(
                 "file", upload.file.name, upload.file.asRequestBody()
             )
-
             val response = apiService.upload(media)
             checkResponse(response)
-            return response.body() ?: throw ApiError(response.code(), response.message())
+            val mediaResponse = response.body() ?: throw ApiError(response.code(), response.message())
+            return Attachment(mediaResponse.url, AttachmentType.IMAGE)
         } catch (e: IOException) {
             throw NetworkException
         } catch (e: Exception) {
@@ -104,8 +105,8 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun saveWithAttachment(post: Post, upload: MediaUpload, retry: Boolean) {
         try {
-            val media = uploadMedia(upload)
-            val postWithAttachment = post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            val attachment = uploadMedia(upload)
+            val postWithAttachment = post.copy(attachment = attachment)
             save(postWithAttachment, retry)
         } catch (e: AppError) {
             throw e

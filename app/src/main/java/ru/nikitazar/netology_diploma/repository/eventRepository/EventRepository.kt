@@ -13,5 +13,5 @@ interface EventRepository {
     suspend fun saveWithAttachment(event: Event, upload: MediaUpload, retry: Boolean)
     suspend fun getById(id: Long): Event
     suspend fun getMaxId(): Long
-    suspend fun uploadMedia(upload: MediaUpload): Media
+    suspend fun uploadMedia(upload: MediaUpload): Attachment
 }
