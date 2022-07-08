@@ -44,8 +44,14 @@ interface EventApiService {
         @Query("count") count: Int
     ): Response<List<Event>>
 
-        @Multipart
-        @POST("media")
-        suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
+    @Multipart
+    @POST("media")
+    suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
+
+    @POST("events/{id}/participants")
+    suspend fun participate(@Path("id") id: Long): Response<Event>
+
+    @DELETE("events/{id}/participants")
+    suspend fun rejection(@Path("id") id: Long): Response<Event>
 
 }

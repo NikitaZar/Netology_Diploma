@@ -14,4 +14,7 @@ interface EventRepository {
     suspend fun getById(id: Long): Event
     suspend fun getMaxId(): Long
     suspend fun uploadMedia(upload: MediaUpload): Attachment
+    suspend fun joinById(id: Long)
+    suspend fun rejectById(id: Long)
+
 }

@@ -100,6 +100,36 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun joinById(id: Long) {
+        try {
+            val response = apiService.participate(id)
+            checkResponse(response)
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            dao.insert(EventEntity.fromDto(body))
+        } catch (e: ApiError) {
+            throw e
+        } catch (e: IOException) {
+            throw NetworkException
+        } catch (e: Exception) {
+            throw UnknownException
+        }
+    }
+
+    override suspend fun rejectById(id: Long) {
+        try {
+            val response = apiService.rejection(id)
+            checkResponse(response)
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            dao.insert(EventEntity.fromDto(body))
+        } catch (e: ApiError) {
+            throw e
+        } catch (e: IOException) {
+            throw NetworkException
+        } catch (e: Exception) {
+            throw UnknownException
+        }
+    }
+
     override suspend fun saveWithAttachment(event: Event, upload: MediaUpload, retry: Boolean) {
         try {
             val attachment = uploadMedia(upload)
