@@ -65,7 +65,10 @@ class EventViewModel @Inject constructor(
         .flatMapLatest {
             cached.map { pagingData ->
                 pagingData.map { event ->
-                    event.copy(published = convertTimeFormat(event.published))
+                    event.copy(
+                        published = convertTimeFormat(event.published),
+                        datetime = convertTimeFormat(event.datetime)
+                    )
                 }
             }
         }

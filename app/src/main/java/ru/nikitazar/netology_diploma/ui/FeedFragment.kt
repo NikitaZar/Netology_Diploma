@@ -1,26 +1,20 @@
 package ru.nikitazar.netology_diploma.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.adapter.FeedAdapter
-import ru.nikitazar.netology_diploma.adapter.OnInteractionListener
+import ru.nikitazar.netology_diploma.adapter.FeedOnInteractionListener
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.FragmentFeedBinding
 import ru.nikitazar.netology_diploma.dto.Post
@@ -53,7 +47,7 @@ class FeedFragment : Fragment() {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
         val adapter = FeedAdapter(
-            object : OnInteractionListener {
+            object : FeedOnInteractionListener {
                 override fun onEdit(post: Post) {
                     postViewModel.edit(post)
                 }
@@ -100,7 +94,7 @@ class FeedFragment : Fragment() {
             if (post.id != 0L) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_editPostFragment,
-                    Bundle().apply { textArg = post.content })
+                    Bundle().apply { textArg = post.content }) //TODO
             }
         }
 

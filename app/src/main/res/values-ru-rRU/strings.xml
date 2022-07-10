@@ -30,4 +30,6 @@
     <string name="no_events">Событий пока чт нет...</string>
     <string name="posts_item_name">Посты</string>
     <string name="events_item_name">События</string>
+    <string name="join">Участвовать</string>
+    <string name="reject">Отказаться</string>
 </resources>

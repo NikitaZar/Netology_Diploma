@@ -10,7 +10,7 @@ data class Event(
     @SerializedName("author")
     val author: String = "",
     @SerializedName("authorAvatar")
-    val authorAvatar: String = "",
+    val authorAvatar: String? = null,
     @SerializedName("content")
     val content: String = "",
     @SerializedName("datetime")

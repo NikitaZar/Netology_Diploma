@@ -4,7 +4,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ru.nikitazar.netology_diploma.repository.*
 import ru.nikitazar.netology_diploma.repository.postRepository.PostRepository
 import ru.nikitazar.netology_diploma.repository.postRepository.PostRepositoryImpl
 import javax.inject.Singleton

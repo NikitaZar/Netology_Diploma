@@ -7,7 +7,6 @@ import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import ru.nikitazar.netology_diploma.BuildConfig
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.CardPostBinding
@@ -15,7 +14,7 @@ import ru.nikitazar.netology_diploma.dto.Post
 import ru.nikitazar.netology_diploma.view.load
 import ru.nikitazar.netology_diploma.view.loadCircleCrop
 
-interface OnInteractionListener {
+interface FeedOnInteractionListener {
     fun onLike(post: Post)
     fun onEdit(post: Post)
     fun onRemove(post: Post)
@@ -23,7 +22,7 @@ interface OnInteractionListener {
 }
 
 class FeedAdapter(
-    private val onInteractionListener: OnInteractionListener,
+    private val onInteractionListener: FeedOnInteractionListener,
     private val appAuth: AppAuth
 ) : PagingDataAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
 
@@ -42,7 +41,7 @@ class FeedAdapter(
 
 class PostViewHolder(
     private val binding: CardPostBinding,
-    private val onInteractionListener: OnInteractionListener,
+    private val onInteractionListener: FeedOnInteractionListener,
     private val appAuth: AppAuth
 ) : RecyclerView.ViewHolder(binding.root) {
 

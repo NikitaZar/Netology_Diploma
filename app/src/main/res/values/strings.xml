@@ -31,4 +31,6 @@
     <string name="no_events">There are no events...</string>
     <string name="posts_item_name">Posts</string>
     <string name="events_item_name">Events</string>
+    <string name="join">Join</string>
+    <string name="reject">Reject</string>
 </resources>
