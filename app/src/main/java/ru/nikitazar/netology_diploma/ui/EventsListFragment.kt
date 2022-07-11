@@ -20,6 +20,8 @@ import ru.nikitazar.netology_diploma.databinding.FragmentEventsListBinding
 import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Event
 import ru.nikitazar.netology_diploma.dto.User
+import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
+import ru.nikitazar.netology_diploma.ui.EditPostFragment.Companion.textArg
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.EventViewModel
 import ru.nikitazar.netology_diploma.viewModel.UserViewModel
@@ -59,7 +61,7 @@ class EventsListFragment : Fragment() {
                 }
 
                 override fun onEdit(event: Event) {
-                    //TODO("Not yet implemented")
+                    eventViewModel.edit(event)
                 }
 
                 override fun onRemove(event: Event) {
@@ -95,13 +97,15 @@ class EventsListFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
-            //TODO
+            findNavController().navigate(R.id.action_eventsListFragment_to_editEventFragment)
         }
 
         eventViewModel.edited.observe(viewLifecycleOwner) { event ->
             adapter.refresh()
             if (event.id != 0L) {
-                //TODO
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_editPostFragment,
+                    Bundle().apply { longArg = event.id })
             }
         }
 

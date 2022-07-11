@@ -28,25 +28,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-private val empty = Event(
-    id = 0,
-    authorId = 0,
-    author = "",
-    authorAvatar = "",
-    content = "",
-    datetime = "",
-    published = "",
-    coords = Coords(0F, 0F),
-    type = EventType.OFFLINE,
-    likeOwnerIds = emptyList(),
-    likedByMe = false,
-    speakerIds = emptyList(),
-    participantsIds = emptyList(),
-    participatedByMe = false,
-    attachment = null,
-    link = null,
-)
-
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class EventViewModel @Inject constructor(
@@ -55,7 +36,24 @@ class EventViewModel @Inject constructor(
     private val calendar: Calendar,
 ) : ViewModel() {
 
-    private val _dataState = MutableLiveData(FeedModelState())
+   private val empty = Event(
+        id = 0,
+        authorId = 0,
+        author = "",
+        authorAvatar = "",
+        content = "",
+        datetime = "",
+        published = "",
+        coords = Coords(0F, 0F),
+        type = EventType.OFFLINE,
+        likeOwnerIds = emptyList(),
+        likedByMe = false,
+        speakerIds = emptyList(),
+        participantsIds = emptyList(),
+        participatedByMe = false,
+        attachment = null,
+        link = null,
+    )
 
     private val cached
         get() = repository.data.cachedIn(viewModelScope)
@@ -73,6 +71,10 @@ class EventViewModel @Inject constructor(
             }
         }
 
+    val eventById: LiveData<Event>
+        get() = _eventById
+    private val _eventById = MutableLiveData(Event())
+
     private fun convertTimeFormat(ts: String): String {
         return try {
             val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
@@ -86,11 +88,14 @@ class EventViewModel @Inject constructor(
 
     val dataState: LiveData<FeedModelState>
         get() = _dataState
+    private val _dataState = MutableLiveData(FeedModelState())
+
     val edited = MutableLiveData(empty)
-    private val _eventCreated = SingleLiveEvent<Unit>()
 
     val eventCreated: LiveData<Unit>
         get() = _eventCreated
+    private val _eventCreated = SingleLiveEvent<Unit>()
+
     private val noPhoto = PhotoModel()
     private val _photo = MutableLiveData(noPhoto)
 
@@ -102,9 +107,9 @@ class EventViewModel @Inject constructor(
         edited.value = empty
     }
 
-    fun save(content: String) = viewModelScope.launch {
+    fun save(event: Event) = viewModelScope.launch {
         try {
-            changeContent(content)
+            changeContent(event)
             edited.value?.let { post ->
                 when (_photo.value) {
                     noPhoto -> repository.save(post, false)
@@ -127,12 +132,11 @@ class EventViewModel @Inject constructor(
         edited.value = event
     }
 
-    private fun changeContent(content: String) {
-        val text = content.trim()
-        if (edited.value?.content == text) {
+    private fun changeContent(event: Event) {
+        if (edited.value == event) {
             return
         }
-        edited.value = edited.value?.copy(content = text, published = calendar.time.time.toString())
+        edited.value = event.copy(published = calendar.time.time.toString())
     }
 
     fun likeById(id: Long) = viewModelScope.launch {
@@ -182,5 +186,10 @@ class EventViewModel @Inject constructor(
             _dataState.value =
                 FeedModelState(error = true, actionType = ActionType.REMOVE, actionId = id)
         }
+    }
+
+
+    fun getById(id: Long) = viewModelScope.launch {
+        _eventById.postValue(repository.getById(id))
     }
 }
