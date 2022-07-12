@@ -1,20 +1,19 @@
 package ru.nikitazar.netology_diploma.repository.postRepository
 
-import android.util.Log
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import ru.nikitazar.netology_diploma.api.PostApiService
 import ru.nikitazar.netology_diploma.dao.PostDao
-import ru.nikitazar.netology_diploma.dto.*
+import ru.nikitazar.netology_diploma.dto.Attachment
+import ru.nikitazar.netology_diploma.dto.AttachmentType
+import ru.nikitazar.netology_diploma.dto.MediaUpload
+import ru.nikitazar.netology_diploma.dto.Post
 import ru.nikitazar.netology_diploma.entity.PostEntity
 import ru.nikitazar.netology_diploma.errors.*
-import ru.nikitazar.netology_diploma.repository.postRepository.PostRemoteMediator
-import ru.nikitazar.netology_diploma.repository.postRepository.PostRepository
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton

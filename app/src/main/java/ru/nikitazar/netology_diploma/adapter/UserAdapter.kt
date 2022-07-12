@@ -1,8 +1,9 @@
 package ru.nikitazar.netology_diploma.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,10 @@ import ru.nikitazar.netology_diploma.databinding.CardUsersHorizontalBinding
 import ru.nikitazar.netology_diploma.databinding.CardUsersVerticalBinding
 import ru.nikitazar.netology_diploma.dto.User
 import ru.nikitazar.netology_diploma.view.loadCircleCrop
+
+interface UserOnInteractionListener {
+    fun onRemove(id: Long)
+}
 
 class UserVerticalAdapter(
 ) : ListAdapter<User, UserVerticalViewHolder>(UserDiffCallback()) {
@@ -39,11 +44,13 @@ class UserVerticalViewHolder(
     }
 }
 
-class UserHorizontalAdapter : ListAdapter<User, UserHorizontalViewHolder>(UserDiffCallback()) {
+class UserHorizontalAdapter(
+    private val onInteractionListener: UserOnInteractionListener,
+) : ListAdapter<User, UserHorizontalViewHolder>(UserDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserHorizontalViewHolder {
         val binding = CardUsersHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return UserHorizontalViewHolder(binding)
+        return UserHorizontalViewHolder(binding, onInteractionListener)
     }
 
     override fun onBindViewHolder(holder: UserHorizontalViewHolder, position: Int) {
@@ -54,13 +61,23 @@ class UserHorizontalAdapter : ListAdapter<User, UserHorizontalViewHolder>(UserDi
 
 class UserHorizontalViewHolder(
     private val binding: CardUsersHorizontalBinding,
+    private val onInteractionListener: UserOnInteractionListener,
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    private var userId = 0L
+
     fun bind(user: User) {
+        userId = user.id
+        Log.i("speakerIds bind", userId.toString())
         binding.apply {
             name.text = user.name
             val avatarUrl = user.avatar ?: ""
             avatar.loadCircleCrop(avatarUrl, R.drawable.ic_empty_avatar)
+
+            root.setOnLongClickListener {
+                onInteractionListener.onRemove(userId)
+                true
+            }
         }
     }
 }

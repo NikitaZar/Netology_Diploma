@@ -16,7 +16,7 @@ data class Post(
     @SerializedName("published")
     val published: String = "",
     @SerializedName("coords")
-    val coords: Coords = Coords(0F, 0F),
+    val coords: Coords? = null,
     @SerializedName("link")
     val link: String? = "",
     @SerializedName("mentionIds")

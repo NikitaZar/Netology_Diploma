@@ -9,7 +9,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:paddingBottom="@dimen/space24x">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +60,8 @@
                 <Spinner
                     android:id="@+id/format_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:entries="@array/event_format"/>
 
             </LinearLayout>
 
@@ -90,41 +92,6 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/speakers_list"
-                android:layout_width="@dimen/space80x"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="@dimen/space2x"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/card_users_horizontal" />
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/common_spacing"
-                android:text="@string/participants" />
-
-            <LinearLayout
-                android:layout_width="@dimen/space80x"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/bt_participants_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add" />
-
-                <Spinner
-                    android:id="@+id/participants_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/participants_list"
                 android:layout_width="@dimen/space80x"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -202,8 +169,8 @@
                 style="@style/Widget.AppTheme.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignBaseline="@id/takePhoto"
+                android:layout_alignParentEnd="true"
                 android:layout_marginEnd="@dimen/space2x"
                 android:padding="@dimen/common_spacing"
                 app:icon="@drawable/ic_baseline_near_me_24" />

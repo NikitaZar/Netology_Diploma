@@ -44,7 +44,7 @@ class EventViewModel @Inject constructor(
         content = "",
         datetime = "",
         published = "",
-        coords = Coords(0F, 0F),
+        coords = null,
         type = EventType.OFFLINE,
         likeOwnerIds = emptyList(),
         likedByMe = false,
@@ -110,11 +110,11 @@ class EventViewModel @Inject constructor(
     fun save(event: Event) = viewModelScope.launch {
         try {
             changeContent(event)
-            edited.value?.let { post ->
+            edited.value?.let { event1 ->
                 when (_photo.value) {
-                    noPhoto -> repository.save(post, false)
+                    noPhoto -> repository.save(event1, false)
                     else -> _photo.value?.file?.let { file ->
-                        repository.saveWithAttachment(post, MediaUpload(file), false)
+                        repository.saveWithAttachment(event1, MediaUpload(file), false)
                     }
                 }
             }

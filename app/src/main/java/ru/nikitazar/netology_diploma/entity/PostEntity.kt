@@ -18,7 +18,7 @@ data class PostEntity(
     val content: String = "",
     val published: String = "",
     @Embedded
-    val coords: Coords = Coords(0F, 0F),
+    val coords: Coords? = null,
     val link: String?,
     val mentionIds: String = "",
     val mentionedMe: Boolean = false,

@@ -13,7 +13,7 @@ import ru.nikitazar.netology_diploma.entity.*
         EventRemoteKeyEntity::class,
         UserEntity::class
     ],
-    version = 4
+    version = 5
 )
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao

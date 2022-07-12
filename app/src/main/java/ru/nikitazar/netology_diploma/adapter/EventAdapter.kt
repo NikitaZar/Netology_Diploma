@@ -75,10 +75,14 @@ class EventViewHolder(
             val avatarUrl = event.authorAvatar ?: ""
             author.avatar.loadCircleCrop(avatarUrl, R.drawable.ic_empty_avatar)
 
-            val speakersAdapter = UserHorizontalAdapter()
+            val speakersAdapter = UserHorizontalAdapter(object : UserOnInteractionListener {
+                override fun onRemove(id: Long) = Unit
+            })
             listSpeakers.adapter = speakersAdapter
 
-            val participantsAdapter = UserHorizontalAdapter()
+            val participantsAdapter = UserHorizontalAdapter(object : UserOnInteractionListener {
+                override fun onRemove(id: Long) = Unit
+            })
             listParticipants.adapter = participantsAdapter
 
             userViewModel.data.observe(lifecycleOwner) { users ->
@@ -103,8 +107,11 @@ class EventViewHolder(
                 }
             }
 
+            navigate.isVisible = (event.coords != null)
             navigate.setOnClickListener {
-                onInteractionListener.onMap(event.coords)
+                event.coords?.let {
+                    onInteractionListener.onMap(it)
+                }
             }
 
             val ownedByMe = event.authorId == appAuth.authStateFlow.value.id

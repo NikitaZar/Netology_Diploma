@@ -16,7 +16,7 @@ data class EventEntity(
     val datetime: String = "",
     val published: String = "",
     @Embedded
-    val coords: Coords = Coords(0F, 0F),
+    val coords: Coords? = null,
     val eventType: EventType = EventType.OFFLINE,
     val likeOwnerIds: String = "",
     val likedByMe: Boolean = false,
