@@ -104,7 +104,7 @@ class EventsListFragment : Fragment() {
             adapter.refresh()
             if (event.id != 0L) {
                 findNavController().navigate(
-                    R.id.action_feedFragment_to_editPostFragment,
+                    R.id.action_eventsListFragment_to_editEventFragment,
                     Bundle().apply { longArg = event.id })
             }
         }

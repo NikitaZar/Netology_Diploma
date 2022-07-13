@@ -25,8 +25,8 @@ interface EventDao {
     suspend fun removeAll()
 
     @Query("SELECT * FROM EventEntity WHERE id = :id")
-    suspend fun getPostById(id: Long): EventEntity?
+    suspend fun getById(id: Long): EventEntity?
 
     @Query("SELECT * FROM EventEntity ORDER BY id DESC LIMIT 1")
-    suspend fun getPostMaxId(): EventEntity?
+    suspend fun getMaxId(): EventEntity?
 }

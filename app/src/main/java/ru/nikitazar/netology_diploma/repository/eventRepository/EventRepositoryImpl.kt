@@ -34,9 +34,9 @@ class EventRepositoryImpl @Inject constructor(
         pagingData.map(EventEntity::toDto)
     }
 
-    override suspend fun getById(id: Long) = dao.getPostById(id)?.toDto() ?: throw DbError
+    override suspend fun getById(id: Long) = dao.getById(id)?.toDto() ?: throw DbError
 
-    override suspend fun getMaxId() = dao.getPostMaxId()?.toDto()?.id ?: throw DbError
+    override suspend fun getMaxId() = dao.getMaxId()?.toDto()?.id ?: throw DbError
 
     override suspend fun likeById(id: Long) {
         try {

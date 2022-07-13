@@ -3,6 +3,7 @@ package ru.nikitazar.netology_diploma.ui
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -94,9 +95,12 @@ class EditEventFragment : Fragment() {
         val speakerIdsData = MutableLiveData(emptyList<Long>())
         var users = userViewModel.data.value ?: emptyList()
         val speakersSpinner = binding.speakersSpinner
-        userViewModel.data.observe(viewLifecycleOwner) { users = it }
-        val speakersSpinnerAdapter = UserSpinnerAdapter(users, speakersSpinner.context)
-        speakersSpinner.adapter = speakersSpinnerAdapter
+        userViewModel.data.observe(viewLifecycleOwner) {
+            users = it
+            Log.i("users", users.toString())
+            val speakersSpinnerAdapter = UserSpinnerAdapter(users, speakersSpinner.context)
+            speakersSpinner.adapter = speakersSpinnerAdapter
+        }
         var newSpeakerId = 0L
         val speakersAdapter = UserHorizontalAdapter(object : UserOnInteractionListener {
             override fun onRemove(id: Long) {
@@ -111,6 +115,7 @@ class EditEventFragment : Fragment() {
             val speakers = users.filter { user -> user.id in speakerIds }
             speakersAdapter.submitList(speakers)
             event = event.copy(speakerIds = speakerIds)
+            Log.i("speakerIds", speakerIds.toString())
         }
 
         val formatSpinner = binding.formatSpinner
@@ -119,7 +124,6 @@ class EditEventFragment : Fragment() {
                 val format = formatSpinner.selectedItem.toString()
                 event = event.copy(type = EventType.valueOf(format))
             }
-
             override fun onNothingSelected(p0: AdapterView<*>?) = Unit
         }
 
@@ -127,20 +131,22 @@ class EditEventFragment : Fragment() {
             val bottomSheetDialog = BottomSheetDialog(it.context, R.style.BottomSheetDialogThem)
             val bottomSheetViewRoot = view?.findViewById<LinearLayout>(R.id.bottom_sheet_calendar)
             val bottomSheetView = LayoutInflater.from(context).inflate(R.layout.layout_bottom_sheet_dt, bottomSheetViewRoot)
+            val timePicker = bottomSheetView.findViewById<TimePicker>(R.id.time_picker)
+            timePicker.setIs24HourView(DateFormat.is24HourFormat(context))
+            val datePicker = bottomSheetView.findViewById<DatePicker>(R.id.date_picker)
+            calendar.set(Calendar.HOUR, timePicker.hour)
+            calendar.set(Calendar.MINUTE, timePicker.minute)
+            calendar.set(Calendar.DAY_OF_MONTH, datePicker.dayOfMonth - 1)
+            calendar.set(Calendar.MONTH, datePicker.month)
+            calendar.set(Calendar.YEAR, datePicker.year)
+
+
             bottomSheetView.findViewById<MaterialButton>(R.id.bt_ok).setOnClickListener {
-                val timePicker = bottomSheetView.findViewById<TimePicker>(R.id.time_picker)
-                timePicker.setIs24HourView(true) //TODO
-                val datePicker = bottomSheetView.findViewById<DatePicker>(R.id.date_picker)
-
-                calendar.set(Calendar.HOUR, timePicker.hour)
-                calendar.set(Calendar.MINUTE, timePicker.minute)
-                calendar.set(Calendar.DAY_OF_MONTH, datePicker.dayOfMonth - 1)
-                calendar.set(Calendar.MONTH, datePicker.month)
-                calendar.set(Calendar.YEAR, datePicker.year)
-
-                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.time).toString()
-                binding.dt.setText(format)
-                event = event.copy(datetime = calendar.time.time.toString())
+                val datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(calendar.time).toString()
+                Log.i("bt_ok", datetime)
+                val formatView = SimpleDateFormat("yyyy-MM-dd HH:mm").format(calendar.time).toString()
+                binding.dt.setText(formatView)
+                event = event.copy(datetime = datetime)
                 bottomSheetDialog.dismiss()
             }
             bottomSheetDialog.setContentView(bottomSheetView)
@@ -216,7 +222,10 @@ class EditEventFragment : Fragment() {
         }
 
         binding.ok.setOnClickListener {
-            event = event.copy(content = binding.content.text.toString())
+            event = event.copy(
+                content = binding.content.text.toString(),
+                link = binding.link.text.toString()
+            )
             eventVewModel.save(event)
             AndroidUtils.hideKeyboard(requireView())
         }

@@ -16,7 +16,8 @@ class UserViewModel @Inject constructor(
     private val repository: UserRepository,
 ) : ViewModel() {
 
-    val data: LiveData<List<User>> = repository.data
+    val data: LiveData<List<User>>
+        get() = repository.data
 
     init {
         loadUsers()

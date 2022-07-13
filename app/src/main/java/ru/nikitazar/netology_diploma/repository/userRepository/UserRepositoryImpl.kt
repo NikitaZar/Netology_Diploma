@@ -17,7 +17,9 @@ import ru.nikitazar.netology_diploma.errors.NetworkException
 import ru.nikitazar.netology_diploma.errors.UnknownException
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UserRepositoryImpl @Inject constructor(
     private val dao: UserDao,
     private val apiService: UserApiService

@@ -35,7 +35,7 @@ class AuthViewModel @Inject constructor(
             val authState = repository.updateUser(login, pass)
             auth.setAuth(authState.id, authState.token, login)
         } catch (e: Exception) {
-            Log.i("updateUser", e.message.toString())
+            Log.e("updateUser", e.message.toString())
         }
     }
 
@@ -54,7 +54,7 @@ class AuthViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            Log.i("updateUser", e.message.toString())
+            Log.e("registerUser", e.toString())
         }
     }
 

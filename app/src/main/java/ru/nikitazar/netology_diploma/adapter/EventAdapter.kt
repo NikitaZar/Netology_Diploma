@@ -1,6 +1,5 @@
 package ru.nikitazar.netology_diploma.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -12,15 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.CardEventBinding
-import ru.nikitazar.netology_diploma.databinding.CardPostBinding
 import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Event
-import ru.nikitazar.netology_diploma.dto.Post
-import ru.nikitazar.netology_diploma.dto.User
 import ru.nikitazar.netology_diploma.view.load
 import ru.nikitazar.netology_diploma.view.loadCircleCrop
 import ru.nikitazar.netology_diploma.viewModel.UserViewModel
-import java.util.*
 
 interface EventOnInteractionListener {
     fun onLike(event: Event)
@@ -59,7 +54,6 @@ class EventViewHolder(
     private val lifecycleOwner: LifecycleOwner
 ) : RecyclerView.ViewHolder(binding.root) {
 
-
     fun bind(event: Event) {
 
         binding.apply {
@@ -69,8 +63,12 @@ class EventViewHolder(
             dt.text = event.datetime
             type.text = event.type.toString()
             link.text = event.link
-            like.isChecked = event.likedByMe
+            like.isChecked = event.likeOwnerIds.contains(appAuth.authStateFlow.value.id)
             likeCnt.text = event.likeOwnerIds.size.toString()
+            speakersHeader.isVisible = event.speakerIds.isNotEmpty()
+            listSpeakers.isVisible = event.speakerIds.isNotEmpty()
+            participantsHeader.isVisible = event.participantsIds.isNotEmpty()
+            listParticipants.isVisible = event.participantsIds.isNotEmpty()
 
             val avatarUrl = event.authorAvatar ?: ""
             author.avatar.loadCircleCrop(avatarUrl, R.drawable.ic_empty_avatar)

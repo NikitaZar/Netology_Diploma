@@ -114,6 +114,8 @@
             <FrameLayout
                 android:id="@+id/photoContainer"
                 android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/common_spacing"
+                android:layout_marginBottom="@dimen/space12x"
                 android:layout_height="wrap_content">
 
                 <ImageView

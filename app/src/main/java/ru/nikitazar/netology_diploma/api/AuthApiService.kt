@@ -12,14 +12,14 @@ interface AuthApiService {
     @POST("users/authentication")
     suspend fun updateUser(
         @Field("login") login: String,
-        @Field("pass") pass: String
+        @Field("password") pass: String
     ): Response<AuthState>
 
     @FormUrlEncoded
     @POST("users/registration")
     suspend fun registerUser(
         @Field("login") login: String,
-        @Field("pass") pass: String,
+        @Field("password") pass: String,
         @Field("name") name: String
     ): Response<AuthState>
 
@@ -27,7 +27,7 @@ interface AuthApiService {
     @POST("users/registration")
     suspend fun registerWithPhoto(
         @Part("login") login: RequestBody,
-        @Part("pass") pass: RequestBody,
+        @Part("password") pass: RequestBody,
         @Part("name") name: RequestBody,
         @Part media: MultipartBody.Part,
     ): Response<AuthState>

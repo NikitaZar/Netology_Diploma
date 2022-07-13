@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.dto.*
+import ru.nikitazar.netology_diploma.errors.DbError
 import ru.nikitazar.netology_diploma.model.ActionType
 import ru.nikitazar.netology_diploma.model.FeedModelState
 import ru.nikitazar.netology_diploma.model.PhotoModel
@@ -36,7 +37,7 @@ class EventViewModel @Inject constructor(
     private val calendar: Calendar,
 ) : ViewModel() {
 
-   private val empty = Event(
+    private val empty = Event(
         id = 0,
         authorId = 0,
         author = "",
@@ -190,6 +191,14 @@ class EventViewModel @Inject constructor(
 
 
     fun getById(id: Long) = viewModelScope.launch {
-        _eventById.postValue(repository.getById(id))
+        try {
+            val event = repository.getById(id)
+            Log.i("getById", event.datetime)
+            _eventById.postValue(event.copy(published = convertTimeFormat(event.published), datetime = convertTimeFormat(event.datetime)))
+            Log.i("getById", event.datetime)
+        } catch (e: DbError) {
+            Log.e("getById", id.toString())
+        }
+
     }
 }

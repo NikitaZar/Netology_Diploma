@@ -47,12 +47,13 @@ class PostViewHolder(
 
     fun bind(post: Post) {
         val ownedByMe = post.authorId == appAuth.authStateFlow.value.id
+        val likedByMe = post.likeOwnerIds.contains(appAuth.authStateFlow.value.id)
 
         binding.apply {
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            like.isChecked = post.likedByMe
+            like.isChecked = likedByMe
             likeCnt.text = post.likeOwnerIds.size.toString()
             attachment.isVisible = false
 

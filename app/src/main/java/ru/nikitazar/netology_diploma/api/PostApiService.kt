@@ -13,19 +13,19 @@ interface PostApiService {
     @GET("posts/{id}")
     suspend fun getById(@Path("id") id: Long): Response<Post>
 
-    @POST("posts")
+    @POST("posts/")
     suspend fun save(@Body post: Post): Response<Post>
 
     @DELETE("posts/{id}")
     suspend fun removeById(@Path("id") id: Long): Response<Unit>
 
-    @POST("posts/{id}/likes")
+    @POST("posts/{id}/likes/ ")
     suspend fun likeById(@Path("id") id: Long): Response<Post>
 
     @DELETE("posts/{id}/likes")
     suspend fun dislikeById(@Path("id") id: Long): Response<Post>
 
-    @GET("posts/{id}/newer")
+    @GET("posts/{id}/newer/")
     suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
 
     @GET("posts/latest")
@@ -44,7 +44,7 @@ interface PostApiService {
     ): Response<List<Post>>
 
         @Multipart
-        @POST("media")
+        @POST("media/")
         suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
 
 }

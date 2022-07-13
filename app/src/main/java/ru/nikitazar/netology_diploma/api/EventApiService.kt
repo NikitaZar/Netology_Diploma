@@ -14,13 +14,13 @@ interface EventApiService {
     @GET("events/{id}")
     suspend fun getById(@Path("id") id: Long): Response<Event>
 
-    @POST("events")
+    @POST("events/")
     suspend fun save(@Body event: Event): Response<Event>
 
     @DELETE("events/{id}")
     suspend fun removeById(@Path("id") id: Long): Response<Unit>
 
-    @POST("events/{id}/likes")
+    @POST("events/{id}/likes/")
     suspend fun likeById(@Path("id") id: Long): Response<Event>
 
     @DELETE("events/{id}/likes")

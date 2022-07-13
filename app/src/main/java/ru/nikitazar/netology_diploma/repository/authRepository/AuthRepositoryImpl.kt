@@ -44,7 +44,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun registerWithPhoto(
         login: String,
-        pass: String,
+        password: String,
         name: String,
         upload: MediaUpload
     ): AuthState {
@@ -54,7 +54,7 @@ class AuthRepositoryImpl @Inject constructor(
 
         val response = apiService.registerWithPhoto(
             login.toRequestBody(),
-            pass.toRequestBody(),
+            password.toRequestBody(),
             name.toRequestBody(),
             media
         )
