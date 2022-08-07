@@ -1,14 +1,14 @@
 package ru.nikitazar.netology_diploma.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.tabs.TabLayout
@@ -43,6 +43,14 @@ class HomeFragment : Fragment() {
                 }
             }
         )
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.editEventFragment -> view.findViewById<TabLayout>(R.id.toolbarTabs).isVisible = false
+                R.id.editPostFragment -> view.findViewById<TabLayout>(R.id.toolbarTabs).isVisible = false
+                else -> view.findViewById<TabLayout>(R.id.toolbarTabs).isVisible = true
+            }
+        }
     }
 
     override fun onCreateView(
