@@ -39,4 +39,8 @@
     <string name="date_time">Дата/Время</string>
     <string name="user_already_registered">Такой пользователь уже зарегистрирован</string>
     <string name="incorrect_password">Неверный пароль</string>
+    <string name="feedFragment">Посты</string>
+    <string name="eventsListFragment">События</string>
+    <string name="fragment_edit_post">Редактор поста</string>
+    <string name="editEventFragment">Редактор события</string>
 </resources>

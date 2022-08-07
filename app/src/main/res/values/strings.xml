@@ -40,6 +40,10 @@
     <string name="add">Add</string>
     <string name="user_already_registered">User already registered</string>
     <string name="incorrect_password">Incorrect password</string>
+    <string name="feedFragment">Posts</string>
+    <string name="eventsListFragment">Events</string>
+    <string name="fragment_edit_post">Edit Post</string>
+    <string name="editEventFragment">Edit Event</string>
 
     <string-array name="event_format">
         <item>ONLINE</item>
