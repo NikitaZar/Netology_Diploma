@@ -38,4 +38,5 @@
     <string name="them">Тема</string>
     <string name="date_time">Дата/Время</string>
     <string name="user_already_registered">Такой пользователь уже зарегистрирован</string>
+    <string name="incorrect_password">Неверный пароль</string>
 </resources>

@@ -18,7 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.databinding.FragmentRegistrationBinding
-import ru.nikitazar.netology_diploma.model.RegistrationErrorType
+import ru.nikitazar.netology_diploma.model.AuthErrorType
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 
@@ -126,8 +126,8 @@ class RegistrationFragment : Fragment() {
 
         authViewModel.errorState.observe(viewLifecycleOwner) {
             when (it.type) {
-                RegistrationErrorType.REGISTERED -> Toast.makeText(context, getString(R.string.user_already_registered), Toast.LENGTH_LONG).show()
-                RegistrationErrorType.NO_ERROR -> Unit
+                AuthErrorType.REGISTERED -> Toast.makeText(context, getString(R.string.user_already_registered), Toast.LENGTH_LONG).show()
+                else-> Unit
             }
         }
 

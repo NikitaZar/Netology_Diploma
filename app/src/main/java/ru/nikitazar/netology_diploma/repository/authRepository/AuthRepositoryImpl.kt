@@ -24,11 +24,9 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             val response = apiService.updateUser(login, pass)
             checkResponse(response)
-            return response.body() ?: throw ApiError(response.code(), response.message())
+            return response.body() ?: throw ApiError2(response.code(), response.message(), response.errorBody())
         } catch (e: IOException) {
             throw NetworkException
-        } catch (e: Exception) {
-            throw UnknownException
         }
     }
 
@@ -36,11 +34,9 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             val response = apiService.registerUser(login, pass, name)
             checkResponse(response)
-            return response.body() ?: throw ApiError2(response.code(), response.message(), response.raw().body)
+            return response.body() ?: throw ApiError2(response.code(), response.message(), response.errorBody())
         } catch (e: IOException) {
             throw NetworkException
-//        } catch (e: Exception) {
-//            throw UnknownException
         }
     }
 
@@ -62,7 +58,7 @@ class AuthRepositoryImpl @Inject constructor(
         )
 
         checkResponse(response)
-        return response.body() ?: throw ApiError2(response.code(), response.message(), response.raw().body)
+        return response.body() ?: throw ApiError2(response.code(), response.message(), response.errorBody())
     }
 
     private fun checkResponse(response: Response<out Any>) {
