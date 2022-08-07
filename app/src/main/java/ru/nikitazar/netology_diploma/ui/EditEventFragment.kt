@@ -88,11 +88,14 @@ class EditEventFragment : Fragment() {
         var event = empty
         arguments?.longArg?.let { id -> eventVewModel.getById(id) }
         bind(event, binding)
+
+        val speakerIdsData = MutableLiveData(emptyList<Long>())
         eventVewModel.eventById.observe(viewLifecycleOwner) {
+            event = it
+            speakerIdsData.postValue(event.speakerIds)
             bind(it, binding)
         }
 
-        val speakerIdsData = MutableLiveData(emptyList<Long>())
         var users = userViewModel.data.value ?: emptyList()
         val speakersSpinner = binding.speakersSpinner
         userViewModel.data.observe(viewLifecycleOwner) {
@@ -138,7 +141,7 @@ class EditEventFragment : Fragment() {
             bottomSheetView.findViewById<MaterialButton>(R.id.bt_ok).setOnClickListener {
                 calendar.set(Calendar.HOUR, timePicker.hour)
                 calendar.set(Calendar.MINUTE, timePicker.minute)
-                calendar.set(Calendar.DAY_OF_MONTH, datePicker.dayOfMonth - 1)
+                calendar.set(Calendar.DAY_OF_MONTH, datePicker.dayOfMonth)
                 calendar.set(Calendar.MONTH, datePicker.month)
                 calendar.set(Calendar.YEAR, datePicker.year)
                 val datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(calendar.time).toString()
