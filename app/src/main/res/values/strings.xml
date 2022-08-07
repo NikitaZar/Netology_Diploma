@@ -38,6 +38,7 @@
     <string name="date">Date</string>
     <string name="date_time">Date/Time</string>
     <string name="add">Add</string>
+    <string name="user_already_registered">User already registered</string>
 
     <string-array name="event_format">
         <item>ONLINE</item>

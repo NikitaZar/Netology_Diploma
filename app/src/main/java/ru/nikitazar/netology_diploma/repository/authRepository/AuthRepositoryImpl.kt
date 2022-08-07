@@ -3,10 +3,12 @@ package ru.nikitazar.netology_diploma.repository.authRepository
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Response
 import ru.nikitazar.netology_diploma.api.AuthApiService
 import ru.nikitazar.netology_diploma.dto.AuthState
 import ru.nikitazar.netology_diploma.dto.MediaUpload
 import ru.nikitazar.netology_diploma.errors.ApiError
+import ru.nikitazar.netology_diploma.errors.ApiError2
 import ru.nikitazar.netology_diploma.errors.NetworkException
 import ru.nikitazar.netology_diploma.errors.UnknownException
 import ru.nikitazar.netology_diploma.repository.postRepository.checkResponse
@@ -34,11 +36,11 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             val response = apiService.registerUser(login, pass, name)
             checkResponse(response)
-            return response.body() ?: throw ApiError(response.code(), response.message())
+            return response.body() ?: throw ApiError2(response.code(), response.message(), response.raw().body)
         } catch (e: IOException) {
             throw NetworkException
-        } catch (e: Exception) {
-            throw UnknownException
+//        } catch (e: Exception) {
+//            throw UnknownException
         }
     }
 
@@ -60,6 +62,12 @@ class AuthRepositoryImpl @Inject constructor(
         )
 
         checkResponse(response)
-        return response.body() ?: throw ApiError(response.code(), response.message())
+        return response.body() ?: throw ApiError2(response.code(), response.message(), response.raw().body)
+    }
+
+    private fun checkResponse(response: Response<out Any>) {
+        if (!response.isSuccessful) {
+            throw ApiError2(response.code(), response.message(), response.errorBody())
+        }
     }
 }

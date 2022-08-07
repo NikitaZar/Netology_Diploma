@@ -37,4 +37,5 @@
     <string name="add">Добавить</string>
     <string name="them">Тема</string>
     <string name="date_time">Дата/Время</string>
+    <string name="user_already_registered">Такой пользователь уже зарегистрирован</string>
 </resources>

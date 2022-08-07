@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.databinding.FragmentRegistrationBinding
+import ru.nikitazar.netology_diploma.model.RegistrationErrorType
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 
@@ -119,6 +121,13 @@ class RegistrationFragment : Fragment() {
         authViewModel.data.observe(viewLifecycleOwner) {
             if (it.id != 0L) {
                 findNavController().navigate(R.id.action_registrationFragment_to_homeFragment)
+            }
+        }
+
+        authViewModel.errorState.observe(viewLifecycleOwner) {
+            when (it.type) {
+                RegistrationErrorType.REGISTERED -> Toast.makeText(context, getString(R.string.user_already_registered), Toast.LENGTH_LONG).show()
+                RegistrationErrorType.NO_ERROR -> Unit
             }
         }
 

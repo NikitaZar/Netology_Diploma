@@ -1,5 +1,6 @@
 package ru.nikitazar.netology_diploma.errors
 
+import okhttp3.ResponseBody
 import java.io.IOException
 import java.sql.SQLException
 
@@ -15,6 +16,7 @@ sealed class AppError(val code: Int, val info: String) : RuntimeException(info) 
 }
 
 class ApiError(code: Int, message: String) : AppError(code, message)
+class ApiError2(code: Int, message: String, val responseBody: ResponseBody?) : AppError(code, message)
 
 object NetworkException : AppError(-1, "no_network")
 object UnknownException : AppError(-1, "unknown")
