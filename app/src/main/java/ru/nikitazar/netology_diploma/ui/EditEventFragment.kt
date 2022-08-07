@@ -134,16 +134,14 @@ class EditEventFragment : Fragment() {
             val timePicker = bottomSheetView.findViewById<TimePicker>(R.id.time_picker)
             timePicker.setIs24HourView(DateFormat.is24HourFormat(context))
             val datePicker = bottomSheetView.findViewById<DatePicker>(R.id.date_picker)
-            calendar.set(Calendar.HOUR, timePicker.hour)
-            calendar.set(Calendar.MINUTE, timePicker.minute)
-            calendar.set(Calendar.DAY_OF_MONTH, datePicker.dayOfMonth - 1)
-            calendar.set(Calendar.MONTH, datePicker.month)
-            calendar.set(Calendar.YEAR, datePicker.year)
-
 
             bottomSheetView.findViewById<MaterialButton>(R.id.bt_ok).setOnClickListener {
+                calendar.set(Calendar.HOUR, timePicker.hour)
+                calendar.set(Calendar.MINUTE, timePicker.minute)
+                calendar.set(Calendar.DAY_OF_MONTH, datePicker.dayOfMonth - 1)
+                calendar.set(Calendar.MONTH, datePicker.month)
+                calendar.set(Calendar.YEAR, datePicker.year)
                 val datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(calendar.time).toString()
-                Log.i("bt_ok", datetime)
                 val formatView = SimpleDateFormat("yyyy-MM-dd HH:mm").format(calendar.time).toString()
                 binding.dt.setText(formatView)
                 event = event.copy(datetime = datetime)
