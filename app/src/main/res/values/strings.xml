@@ -44,6 +44,11 @@
     <string name="eventsListFragment">Events</string>
     <string name="fragment_edit_post">Edit Post</string>
     <string name="editEventFragment">Edit Event</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="create_marker">Create marker</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
 
     <string-array name="event_format">
         <item>ONLINE</item>

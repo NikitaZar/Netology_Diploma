@@ -21,6 +21,13 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        Properties properties = new Properties()
+        if (rootProject.file("maps.properties").exists()) {
+            properties.load(rootProject.file("maps.properties").newDataInputStream())
+        }
+        def mapApiKey = properties.getProperty('MAPKIT_API_KEY')
+        resValue "string", "MAPKIT_API_KEY", mapApiKey
     }
 
     buildTypes {
@@ -67,6 +74,7 @@ dependencies {
     def firebase_version = "29.0.4"
     def play_service_version = "18.0.1"
     def paging_version = "3.1.1"
+    def yandex_maps_version = "4.0.0-lite"
 
     implementation "androidx.core:core-ktx:$core_version"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
@@ -97,4 +105,5 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     implementation "com.google.android.gms:play-services-base:$play_service_version"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    implementation "com.yandex.android:maps.mobile:$yandex_maps_version"
 }

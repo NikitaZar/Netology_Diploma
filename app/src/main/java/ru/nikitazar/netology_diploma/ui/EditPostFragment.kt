@@ -3,30 +3,52 @@ package ru.nikitazar.netology_diploma.ui
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.mapview.MapView
 import dagger.hilt.android.AndroidEntryPoint
+import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.databinding.FragmentEditPostBinding
 import ru.nikitazar.netology_diploma.utils.AndroidUtils
 import ru.nikitazar.netology_diploma.utils.StringArg
+import ru.nikitazar.netology_diploma.utils.attachToLifecycle
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 
 @AndroidEntryPoint
 class EditPostFragment : Fragment() {
+
+    private lateinit var mapKit: MapKit
+    private lateinit var mapObjects: MapObjectCollection
+
+    private val inputListener = object : InputListener {
+        override fun onMapTap(map: Map, point: Point) {
+            //nothing to do
+        }
+
+        override fun onMapLongTap(map: Map, point: Point) {
+            //TODO set Point on Map
+        }
+    }
 
     companion object {
         var Bundle.textArg: String? by StringArg
@@ -39,6 +61,12 @@ class EditPostFragment : Fragment() {
     private val authViewModel: AuthViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        MapKitFactory.initialize(context)
+        mapKit = MapKitFactory.getInstance()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -126,6 +154,36 @@ class EditPostFragment : Fragment() {
             }
         }
 
+        binding.takeCoords.setOnClickListener {
+            val bottomSheetDialog = BottomSheetDialog(it.context, R.style.BottomSheetDialogThem)
+            val bottomSheetViewRoot = view?.findViewById<LinearLayout>(R.id.bottom_sheet_map)
+            val bottomSheetView = LayoutInflater.from(context).inflate(R.layout.layout_bottom_sheet_map, bottomSheetViewRoot)
+
+            val mapView = bottomSheetView.findViewById<MapView>(R.id.mapview)
+            mapView.map.addInputListener(inputListener)
+            mapObjects = mapView.map.mapObjects.addCollection()
+            mapView.attachToLifecycle(viewLifecycleOwner)
+
+            bottomSheetView.findViewById<MaterialButton>(R.id.bt_ok).setOnClickListener {
+                //TODO set Coords
+
+                bottomSheetDialog.dismiss()
+            }
+
+            bottomSheetDialog.setContentView(bottomSheetView)
+            bottomSheetDialog.show()
+        }
+
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+    }
+
+    override fun onStop() {
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
     }
 }
