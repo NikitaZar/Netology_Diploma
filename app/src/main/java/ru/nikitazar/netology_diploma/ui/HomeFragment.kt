@@ -48,6 +48,10 @@ class HomeFragment : Fragment() {
             when (destination.id) {
                 R.id.editEventFragment -> view.findViewById<TabLayout>(R.id.toolbarTabs).isVisible = false
                 R.id.editPostFragment -> view.findViewById<TabLayout>(R.id.toolbarTabs).isVisible = false
+                R.id.eventsListFragment -> {
+                    view.findViewById<Toolbar>(R.id.toolbar).navigationIcon = null
+                    view.findViewById<TabLayout>(R.id.toolbarTabs).isVisible = true
+                }
                 else -> view.findViewById<TabLayout>(R.id.toolbarTabs).isVisible = true
             }
         }
