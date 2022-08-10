@@ -1,4 +1,4 @@
-package ru.nikitazar.netology_diploma.hiltModules
+package ru.nikitazar.netology_diploma.hiltModules.eventModules
 
 import dagger.Module
 import dagger.Provides

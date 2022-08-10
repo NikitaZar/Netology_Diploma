@@ -1,4 +1,4 @@
-package ru.nikitazar.netology_diploma.hiltModules
+package ru.nikitazar.netology_diploma.hiltModules.userModules
 
 import dagger.*
 import dagger.hilt.InstallIn
@@ -9,11 +9,11 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-class ApiServiceModule {
+class UserApiServiceModule {
     @Provides
     @Singleton
-    fun provideApiService(auth: AppAuth): ApiService{
+    fun provideUserApiService(auth: AppAuth): UserApiService{
         return retrofit(okhttp(loggingInterceptor(), authInterceptor(auth)))
-            .create(ApiService::class.java)
+            .create(UserApiService::class.java)
     }
 }

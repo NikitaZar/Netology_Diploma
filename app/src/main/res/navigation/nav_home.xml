@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/feedFragment"
         android:name="ru.nikitazar.netology_diploma.ui.FeedFragment"
-        android:label="fragment_feed"
+        android:label="@string/feedFragment"
         tools:layout="@layout/fragment_feed" >
         <action
             android:id="@+id/action_feedFragment_to_editPostFragment"
@@ -20,11 +20,20 @@
     <fragment
         android:id="@+id/eventsListFragment"
         android:name="ru.nikitazar.netology_diploma.ui.EventsListFragment"
-        android:label="fragment_events_list"
-        tools:layout="@layout/fragment_events_list" />
+        android:label="@string/eventsListFragment"
+        tools:layout="@layout/fragment_events_list" >
+        <action
+            android:id="@+id/action_eventsListFragment_to_editEventFragment"
+            app:destination="@id/editEventFragment" />
+    </fragment>
     <fragment
         android:id="@+id/editPostFragment"
         android:name="ru.nikitazar.netology_diploma.ui.EditPostFragment"
-        android:label="fragment_edit_post"
+        android:label="@string/fragment_edit_post"
         tools:layout="@layout/fragment_edit_post" />
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="ru.nikitazar.netology_diploma.ui.EditEventFragment"
+        android:label="@string/editEventFragment"
+        tools:layout="@layout/fragment_edit_event" />
 </navigation>

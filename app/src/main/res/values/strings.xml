@@ -20,6 +20,33 @@
     <string name="menu_remove">Remove</string>
     <string name="posts">Posts</string>
     <string name="events">Events</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="event">Event</string>
+    <string name="author">Author</string>
+    <string name="time">Time</string>
+    <string name="format">Format</string>
+    <string name="speaker">Speaker</string>
+    <string name="speakers">Speakers</string>
+    <string name="participants">Participants</string>
+    <string name="link">Link</string>
+    <string name="no_events">There are no events...</string>
+    <string name="posts_item_name">Posts</string>
+    <string name="events_item_name">Events</string>
+    <string name="join">Join</string>
+    <string name="reject">Reject</string>
+    <string name="title">Title</string>
+    <string name="them">Them</string>
+    <string name="date">Date</string>
+    <string name="date_time">Date/Time</string>
+    <string name="add">Add</string>
+    <string name="user_already_registered">User already registered</string>
+    <string name="incorrect_password">Incorrect password</string>
+    <string name="feedFragment">Posts</string>
+    <string name="eventsListFragment">Events</string>
+    <string name="fragment_edit_post">Edit Post</string>
+    <string name="editEventFragment">Edit Event</string>
+
+    <string-array name="event_format">
+        <item>ONLINE</item>
+        <item>OFFLINE</item>
+    </string-array>
 </resources>

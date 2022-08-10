@@ -10,7 +10,7 @@ data class Event(
     @SerializedName("author")
     val author: String = "",
     @SerializedName("authorAvatar")
-    val authorAvatar: String = "",
+    val authorAvatar: String? = null,
     @SerializedName("content")
     val content: String = "",
     @SerializedName("datetime")
@@ -18,7 +18,7 @@ data class Event(
     @SerializedName("published")
     val published: String = "",
     @SerializedName("coords")
-    val coords: Coords = Coords(0F, 0F),
+    val coords: Coords? = null,
     @SerializedName("type")
     val type: EventType = EventType.OFFLINE,
     @SerializedName("likeOwnerIds")

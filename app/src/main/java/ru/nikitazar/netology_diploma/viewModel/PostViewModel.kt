@@ -24,7 +24,7 @@ import ru.nikitazar.netology_diploma.dto.Post
 import ru.nikitazar.netology_diploma.model.ActionType
 import ru.nikitazar.netology_diploma.model.FeedModelState
 import ru.nikitazar.netology_diploma.model.PhotoModel
-import ru.nikitazar.netology_diploma.repository.PostRepository
+import ru.nikitazar.netology_diploma.repository.postRepository.PostRepository
 import ru.nikitazar.netology_diploma.utils.SingleLiveEvent
 import java.io.File
 import java.text.SimpleDateFormat
@@ -93,10 +93,7 @@ class PostViewModel @Inject constructor(
 
     val photo: LiveData<PhotoModel>
         get() = _photo
-    private val _avatar = MutableLiveData(noPhoto)
 
-    val avatar: LiveData<PhotoModel>
-        get() = _avatar
 
     fun cancelEdit() = viewModelScope.launch {
         edited.value = empty
@@ -164,37 +161,5 @@ class PostViewModel @Inject constructor(
 
     fun changePhoto(uri: Uri?, file: File?) = viewModelScope.launch {
         _photo.value = PhotoModel(uri, file)
-    }
-
-    fun changeAvatar(uri: Uri?) = viewModelScope.launch {
-        _avatar.value = PhotoModel(uri, uri?.toFile())
-    }
-
-    fun updateUser(login: String, pass: String) = viewModelScope.launch {
-        try {
-            val authState = repository.updateUser(login, pass)
-            auth.setAuth(authState.id, authState.token, login)
-        } catch (e: Exception) {
-            Log.i("updateUser", e.message.toString())
-        }
-    }
-
-    fun registerUser(login: String, pass: String, name: String) = viewModelScope.launch {
-        try {
-            when (_avatar.value) {
-                noPhoto -> {
-                    val authState = repository.registerUser(login, pass, name)
-                    auth.setAuth(authState.id, authState.token, login)
-                }
-                else -> {
-                    _avatar.value?.file?.let { file ->
-                        val authState = repository.registerWithPhoto(login, pass, name, MediaUpload(file))
-                        auth.setAuth(authState.id, authState.token, login)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.i("updateUser", e.message.toString())
-        }
     }
 }
