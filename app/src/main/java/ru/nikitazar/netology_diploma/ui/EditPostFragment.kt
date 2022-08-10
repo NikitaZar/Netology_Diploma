@@ -27,18 +27,41 @@ import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.mapview.MapView
 import dagger.hilt.android.AndroidEntryPoint
 import ru.nikitazar.netology_diploma.R
+import ru.nikitazar.netology_diploma.databinding.FragmentEditEventBinding
 import ru.nikitazar.netology_diploma.databinding.FragmentEditPostBinding
-import ru.nikitazar.netology_diploma.utils.AndroidUtils
-import ru.nikitazar.netology_diploma.utils.StringArg
-import ru.nikitazar.netology_diploma.utils.attachToLifecycle
+import ru.nikitazar.netology_diploma.dto.AttachmentType
+import ru.nikitazar.netology_diploma.dto.Coords
+import ru.nikitazar.netology_diploma.dto.Event
+import ru.nikitazar.netology_diploma.dto.Post
+import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
+import ru.nikitazar.netology_diploma.utils.*
+import ru.nikitazar.netology_diploma.view.load
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
+
+private val empty = Post(
+    id = 0,
+    authorId = 0,
+    author = "",
+    authorAvatar = "",
+    content = "",
+    published = "",
+    coords = Coords(0F, 0F),
+    link = null,
+    mentionIds = emptyList(),
+    mentionedMe = false,
+    likeOwnerIds = emptyList(),
+    likedByMe = false,
+    attachment = null
+)
 
 @AndroidEntryPoint
 class EditPostFragment : Fragment() {
 
     private lateinit var mapKit: MapKit
     private lateinit var mapObjects: MapObjectCollection
+    private var coords: Coords? = null
+    private var defaultCameraLocation = Point(59.945933, 30.320045)
 
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
@@ -46,7 +69,8 @@ class EditPostFragment : Fragment() {
         }
 
         override fun onMapLongTap(map: Map, point: Point) {
-            //TODO set Point on Map
+            coords = point.toCoords()
+            drawPlacemark(point, mapObjects)
         }
     }
 
@@ -78,8 +102,15 @@ class EditPostFragment : Fragment() {
             false
         )
 
-        arguments?.textArg?.let(binding.edit::setText)
-        binding.edit.requestFocus()
+        var post = empty
+        bind(post, binding)
+
+        arguments?.longArg?.let { id -> postVewModel.getById(id) }
+        postVewModel.postById.observe(viewLifecycleOwner) {
+            post = it
+            coords = post.coords
+            bind(it, binding)
+        }
 
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -162,12 +193,26 @@ class EditPostFragment : Fragment() {
             val mapView = bottomSheetView.findViewById<MapView>(R.id.mapview)
             mapView.map.addInputListener(inputListener)
             mapObjects = mapView.map.mapObjects.addCollection()
+
+            coords?.let {
+                moveToLocation(mapView, it.toPoint())
+                drawPlacemark(it.toPoint(), mapObjects)
+            } ?: run {
+//                getUserLocation(defaultCameraLocation, this).observe(viewLifecycleOwner) {
+//                    moveToLocation(mapView, it)
+//                }
+            }
+
             mapView.attachToLifecycle(viewLifecycleOwner)
 
             bottomSheetView.findViewById<MaterialButton>(R.id.bt_ok).setOnClickListener {
-                //TODO set Coords
-
+                coords?.let { postVewModel.changeCoords(it) }
                 bottomSheetDialog.dismiss()
+            }
+
+            bottomSheetView.findViewById<MaterialButton>(R.id.bt_delete).setOnClickListener {
+                coords = null
+                mapView.map.mapObjects.clear()
             }
 
             bottomSheetDialog.setContentView(bottomSheetView)
@@ -185,5 +230,18 @@ class EditPostFragment : Fragment() {
     override fun onStop() {
         MapKitFactory.getInstance().onStop()
         super.onStop()
+    }
+
+    private fun bind(post: Post, binding: FragmentEditPostBinding) {
+        with(binding) {
+            edit.setText(post.content)
+            edit.requestFocus()
+            post.attachment?.let { attachment ->
+                when (attachment.type) {
+                    AttachmentType.IMAGE -> photo.load(post.attachment.url)
+                    else -> Unit
+                }
+            }
+        }
     }
 }

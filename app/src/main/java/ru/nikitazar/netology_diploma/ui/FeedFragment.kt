@@ -18,6 +18,7 @@ import ru.nikitazar.netology_diploma.adapter.FeedOnInteractionListener
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.FragmentFeedBinding
 import ru.nikitazar.netology_diploma.dto.Post
+import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
 import ru.nikitazar.netology_diploma.ui.EditPostFragment.Companion.textArg
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
@@ -94,7 +95,7 @@ class FeedFragment : Fragment() {
             if (post.id != 0L) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_editPostFragment,
-                    Bundle().apply { textArg = post.content }) //TODO
+                    Bundle().apply { longArg = post.id })
             }
         }
 

@@ -19,8 +19,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.dto.Coords
+import ru.nikitazar.netology_diploma.dto.Event
 import ru.nikitazar.netology_diploma.dto.MediaUpload
 import ru.nikitazar.netology_diploma.dto.Post
+import ru.nikitazar.netology_diploma.errors.DbError
 import ru.nikitazar.netology_diploma.model.ActionType
 import ru.nikitazar.netology_diploma.model.FeedModelState
 import ru.nikitazar.netology_diploma.model.PhotoModel
@@ -69,6 +71,10 @@ class PostViewModel @Inject constructor(
                 }
             }
         }
+
+    val postById: LiveData<Post>
+        get() = _postById
+    private val _postById = MutableLiveData(Post())
 
     private fun convertTimeFormat(ts: String): String {
         return try {
@@ -161,5 +167,18 @@ class PostViewModel @Inject constructor(
 
     fun changePhoto(uri: Uri?, file: File?) = viewModelScope.launch {
         _photo.value = PhotoModel(uri, file)
+    }
+
+    fun changeCoords(coords: Coords) = viewModelScope.launch {
+        edited.value = edited.value?.copy(coords = coords)
+    }
+
+    fun getById(id: Long) = viewModelScope.launch {
+        try {
+            val post = repository.getPostById(id)
+            _postById.postValue(post.copy(published = convertTimeFormat(post.published)))
+        } catch (e: DbError) {
+            Log.e("getById", id.toString())
+        }
     }
 }

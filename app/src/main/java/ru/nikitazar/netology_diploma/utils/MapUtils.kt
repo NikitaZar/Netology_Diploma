@@ -21,6 +21,7 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
+import ru.nikitazar.netology_diploma.dto.Coords
 
 fun MapView.attachToLifecycle(lifecycleOwner: LifecycleOwner) {
     lifecycleOwner.lifecycle.addObserver(MapViewLifecycleObserver(this))
@@ -84,6 +85,8 @@ fun drawPlacemark(point: Point, mapObjects: MapObjectCollection) {
 
     Log.i("myLocation", "newPoint: ${point.longitude} x ${point.longitude}")
 }
+
+fun Point.toCoords()= Coords(this.latitude.toFloat(), this.longitude.toFloat())
 
 fun drawSimpleBitmap(): Bitmap {
     val picSize = 50
