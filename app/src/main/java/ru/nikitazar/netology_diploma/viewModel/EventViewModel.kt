@@ -199,6 +199,9 @@ class EventViewModel @Inject constructor(
         } catch (e: DbError) {
             Log.e("getById", id.toString())
         }
+    }
 
+    fun changeCoords(coords: Coords) = viewModelScope.launch {
+        edited.value = edited.value?.copy(coords = coords)
     }
 }

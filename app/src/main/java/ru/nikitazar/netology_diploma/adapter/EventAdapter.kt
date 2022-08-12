@@ -105,7 +105,7 @@ class EventViewHolder(
                 }
             }
 
-            navigate.isVisible = (event.coords != null)
+            navigate.isVisible = event.coords != null
             navigate.setOnClickListener {
                 event.coords?.let {
                     onInteractionListener.onMap(it)

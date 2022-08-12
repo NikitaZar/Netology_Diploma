@@ -25,6 +25,12 @@ import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObjectCollection
 import dagger.hilt.android.AndroidEntryPoint
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.adapter.UserHorizontalAdapter
@@ -37,6 +43,8 @@ import ru.nikitazar.netology_diploma.dto.Event
 import ru.nikitazar.netology_diploma.dto.EventType
 import ru.nikitazar.netology_diploma.utils.AndroidUtils
 import ru.nikitazar.netology_diploma.utils.LongArg
+import ru.nikitazar.netology_diploma.utils.drawPlacemark
+import ru.nikitazar.netology_diploma.utils.toCoords
 import ru.nikitazar.netology_diploma.view.load
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.EventViewModel
@@ -77,6 +85,37 @@ class EditEventFragment : Fragment() {
     private val eventVewModel: EventViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val userViewModel: UserViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val authViewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
+
+    private lateinit var mapKit: MapKit
+    private var coords: Coords? = null
+    private lateinit var mapObjects: MapObjectCollection
+
+    private val inputListener = object : InputListener {
+        override fun onMapTap(map: Map, point: Point) {
+            //nothing to do
+        }
+
+        override fun onMapLongTap(map: Map, point: Point) {
+            coords = point.toCoords()
+            drawPlacemark(point, mapObjects)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        MapKitFactory.initialize(context)
+        mapKit = MapKitFactory.getInstance()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+    }
+
+    override fun onStop() {
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -127,6 +166,7 @@ class EditEventFragment : Fragment() {
                 val format = formatSpinner.selectedItem.toString()
                 event = event.copy(type = EventType.valueOf(format))
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) = Unit
         }
 
@@ -171,7 +211,40 @@ class EditEventFragment : Fragment() {
         }
 
         binding.takeCoords.setOnClickListener {
-            //TODO open MapView
+            val bottomSheetDialogMap = BottomSheetDialogMap(
+                it.context,
+                R.style.BottomSheetDialogThem,
+                R.id.bottom_sheet_map,
+                R.layout.layout_bottom_sheet_map,
+                view,
+                R.id.mapview,
+                inputListener,
+                R.id.bt_ok,
+                R.id.bt_delete,
+                viewLifecycleOwner,
+                true
+            ).apply {
+                onChangeCoords {
+                    coords?.let {
+                        eventVewModel.changeCoords(it)
+                        event = event.copy(coords = it)
+                    }
+                }
+                onDeleteCoords {
+                    coords = null
+                }
+            }.also { map ->
+                mapObjects = map.mapObjects
+            }
+
+            coords?.let {
+                bottomSheetDialogMap.apply {
+                    moveToLocation(it)
+                    drawPlacemark(it)
+                }
+            } ?: run {
+                //bottomSheetDialogMap.moveToDefaultLocation(this)
+            }
         }
 
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
