@@ -2,7 +2,6 @@ package ru.nikitazar.netology_diploma.utils
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -22,6 +21,9 @@ import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import ru.nikitazar.netology_diploma.dto.Coords
+
+
+private val DEFAULT_CAMERA_LOCATION = Point(59.945933, 30.32004)
 
 fun MapView.attachToLifecycle(lifecycleOwner: LifecycleOwner) {
     lifecycleOwner.lifecycle.addObserver(MapViewLifecycleObserver(this))
@@ -46,14 +48,14 @@ private class MapViewLifecycleObserver(
     }
 }
 
-fun getUserLocation(defaultLocation: Point, fragment: Fragment): LiveData<Point> {
+fun moveToUserLocation(fragment: Fragment): LiveData<Point> {
     @SuppressLint("MissingPermission")
     val requestPermissionLauncher =
         fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     val fusedLocationClient =
         LocationServices.getFusedLocationProviderClient(fragment.requireActivity())
-    val userLocation = MutableLiveData(defaultLocation)
+    val userLocation = MutableLiveData(DEFAULT_CAMERA_LOCATION)
     when (PackageManager.PERMISSION_GRANTED) {
         ActivityCompat.checkSelfPermission(
             fragment.requireActivity(),
@@ -61,7 +63,7 @@ fun getUserLocation(defaultLocation: Point, fragment: Fragment): LiveData<Point>
         ) -> {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 val point = Point(location.latitude, location.longitude)
-                userLocation.postValue(point)
+                userLocation.postValue(DEFAULT_CAMERA_LOCATION)
             }
         }
         else -> {
@@ -86,7 +88,7 @@ fun drawPlacemark(point: Point, mapObjects: MapObjectCollection) {
     Log.i("myLocation", "newPoint: ${point.longitude} x ${point.longitude}")
 }
 
-fun Point.toCoords()= Coords(this.latitude.toFloat(), this.longitude.toFloat())
+fun Point.toCoords() = Coords(this.latitude.toFloat(), this.longitude.toFloat())
 
 fun drawSimpleBitmap(): Bitmap {
     val picSize = 50

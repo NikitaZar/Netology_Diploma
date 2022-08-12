@@ -17,9 +17,9 @@ import ru.nikitazar.netology_diploma.adapter.FeedAdapter
 import ru.nikitazar.netology_diploma.adapter.FeedOnInteractionListener
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.FragmentFeedBinding
+import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Post
 import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
-import ru.nikitazar.netology_diploma.ui.EditPostFragment.Companion.textArg
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 import javax.inject.Inject
@@ -62,6 +62,10 @@ class FeedFragment : Fragment() {
 
                 override fun onRemove(post: Post) {
                     postViewModel.removeById(post.id)
+                }
+
+                override fun onMap(coords: Coords) {
+                    //TODO("Not yet implemented")
                 }
 
                 override fun onFullscreenAttachment(attachmentUrl: String) {

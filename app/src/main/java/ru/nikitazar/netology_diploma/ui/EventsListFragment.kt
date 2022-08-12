@@ -21,7 +21,6 @@ import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Event
 import ru.nikitazar.netology_diploma.dto.User
 import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
-import ru.nikitazar.netology_diploma.ui.EditPostFragment.Companion.textArg
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.EventViewModel
 import ru.nikitazar.netology_diploma.viewModel.UserViewModel

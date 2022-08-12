@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
@@ -15,8 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.dhaval2404.imagepicker.constant.ImageProvider
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
@@ -24,14 +21,11 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.MapObjectCollection
-import com.yandex.mapkit.mapview.MapView
 import dagger.hilt.android.AndroidEntryPoint
 import ru.nikitazar.netology_diploma.R
-import ru.nikitazar.netology_diploma.databinding.FragmentEditEventBinding
 import ru.nikitazar.netology_diploma.databinding.FragmentEditPostBinding
 import ru.nikitazar.netology_diploma.dto.AttachmentType
 import ru.nikitazar.netology_diploma.dto.Coords
-import ru.nikitazar.netology_diploma.dto.Event
 import ru.nikitazar.netology_diploma.dto.Post
 import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
 import ru.nikitazar.netology_diploma.utils.*
@@ -59,9 +53,8 @@ private val empty = Post(
 class EditPostFragment : Fragment() {
 
     private lateinit var mapKit: MapKit
-    private lateinit var mapObjects: MapObjectCollection
     private var coords: Coords? = null
-    private var defaultCameraLocation = Point(59.945933, 30.320045)
+    private lateinit var mapObjects: MapObjectCollection
 
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
@@ -72,10 +65,6 @@ class EditPostFragment : Fragment() {
             coords = point.toCoords()
             drawPlacemark(point, mapObjects)
         }
-    }
-
-    companion object {
-        var Bundle.textArg: String? by StringArg
     }
 
     private val postVewModel: PostViewModel by viewModels(
@@ -186,37 +175,36 @@ class EditPostFragment : Fragment() {
         }
 
         binding.takeCoords.setOnClickListener {
-            val bottomSheetDialog = BottomSheetDialog(it.context, R.style.BottomSheetDialogThem)
-            val bottomSheetViewRoot = view?.findViewById<LinearLayout>(R.id.bottom_sheet_map)
-            val bottomSheetView = LayoutInflater.from(context).inflate(R.layout.layout_bottom_sheet_map, bottomSheetViewRoot)
-
-            val mapView = bottomSheetView.findViewById<MapView>(R.id.mapview)
-            mapView.map.addInputListener(inputListener)
-            mapObjects = mapView.map.mapObjects.addCollection()
+            val bottomSheetDialogMap = BottomSheetDialogMap(
+                it.context,
+                R.style.BottomSheetDialogThem,
+                R.id.bottom_sheet_map,
+                R.layout.layout_bottom_sheet_map,
+                view,
+                R.id.mapview,
+                inputListener,
+                R.id.bt_ok,
+                R.id.bt_delete,
+                viewLifecycleOwner
+            ).apply {
+                onChangeCoords {
+                    coords?.let { postVewModel.changeCoords(it) }
+                }
+                onDeleteCoords {
+                    coords = null
+                }
+            }.also { map ->
+                mapObjects = map.mapObjects
+            }
 
             coords?.let {
-                moveToLocation(mapView, it.toPoint())
-                drawPlacemark(it.toPoint(), mapObjects)
+                bottomSheetDialogMap.apply {
+                    moveToLocation(it)
+                    drawPlacemark(it)
+                }
             } ?: run {
-//                getUserLocation(defaultCameraLocation, this).observe(viewLifecycleOwner) {
-//                    moveToLocation(mapView, it)
-//                }
+                //bottomSheetDialogMap.moveToDefaultLocation(this)
             }
-
-            mapView.attachToLifecycle(viewLifecycleOwner)
-
-            bottomSheetView.findViewById<MaterialButton>(R.id.bt_ok).setOnClickListener {
-                coords?.let { postVewModel.changeCoords(it) }
-                bottomSheetDialog.dismiss()
-            }
-
-            bottomSheetView.findViewById<MaterialButton>(R.id.bt_delete).setOnClickListener {
-                coords = null
-                mapView.map.mapObjects.clear()
-            }
-
-            bottomSheetDialog.setContentView(bottomSheetView)
-            bottomSheetDialog.show()
         }
 
         return binding.root
