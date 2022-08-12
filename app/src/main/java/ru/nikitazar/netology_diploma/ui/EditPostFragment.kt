@@ -185,7 +185,8 @@ class EditPostFragment : Fragment() {
                 inputListener,
                 R.id.bt_ok,
                 R.id.bt_delete,
-                viewLifecycleOwner
+                viewLifecycleOwner,
+                true
             ).apply {
                 onChangeCoords {
                     coords?.let { postVewModel.changeCoords(it) }

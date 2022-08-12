@@ -10,6 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObjectCollection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.nikitazar.netology_diploma.R
@@ -20,6 +26,8 @@ import ru.nikitazar.netology_diploma.databinding.FragmentFeedBinding
 import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Post
 import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
+import ru.nikitazar.netology_diploma.utils.drawPlacemark
+import ru.nikitazar.netology_diploma.utils.toCoords
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 import javax.inject.Inject
@@ -30,8 +38,39 @@ class FeedFragment : Fragment() {
     private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val authViewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
+    private lateinit var mapKit: MapKit
+    private var coords: Coords? = null
+    private lateinit var mapObjects: MapObjectCollection
+
+    private val inputListener = object : InputListener {
+        override fun onMapTap(map: Map, point: Point) {
+            //nothing to do
+        }
+
+        override fun onMapLongTap(map: Map, point: Point) {
+            coords = point.toCoords()
+            drawPlacemark(point, mapObjects)
+        }
+    }
+
     @Inject
     lateinit var appAuth: AppAuth
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        MapKitFactory.initialize(context)
+        mapKit = MapKitFactory.getInstance()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+    }
+
+    override fun onStop() {
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,7 +104,24 @@ class FeedFragment : Fragment() {
                 }
 
                 override fun onMap(coords: Coords) {
-                    //TODO("Not yet implemented")
+                    BottomSheetDialogMap(
+                        binding.root.context,
+                        R.style.BottomSheetDialogThem,
+                        R.id.bottom_sheet_map,
+                        R.layout.layout_bottom_sheet_map,
+                        view,
+                        R.id.mapview,
+                        inputListener,
+                        R.id.bt_ok,
+                        R.id.bt_delete,
+                        viewLifecycleOwner,
+                        false
+                    ).apply {
+                        moveToLocation(coords)
+                        drawPlacemark(coords)
+                    }.also { map ->
+                        mapObjects = map.mapObjects
+                    }
                 }
 
                 override fun onFullscreenAttachment(attachmentUrl: String) {
@@ -86,7 +142,7 @@ class FeedFragment : Fragment() {
 
             if (dataState.error) {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.ok){}.show()
+                    .setAction(R.string.ok) {}.show()
             }
         }
 
