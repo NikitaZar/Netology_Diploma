@@ -1,12 +1,15 @@
 package ru.nikitazar.netology_diploma.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.yandex.mapkit.MapKit
@@ -43,6 +46,7 @@ class BottomSheetDialogMapFragment() : BottomSheetDialogFragment() {
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.initialize(context)
@@ -54,17 +58,20 @@ class BottomSheetDialogMapFragment() : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         val binding = FragmentBottomSheetDialogMapBinding.inflate(inflater, container, false)
 
         val mapView = binding.mapview.apply {
             attachToLifecycle(viewLifecycleOwner)
             map.addInputListener(inputListener)
             mapObjects = map.mapObjects.addCollection()
-            //show()
+            Log.i("mapView", "mapObjects") //TODO debug
         }
 
         arguments?.longArg?.let { id -> postVewModel.getById(id) }
         postVewModel.postById.observe(viewLifecycleOwner) { post ->
+            Log.i("mapView", "postDst: $post")  //TODO debug
+            mapObjects.clear()
             post.coords?.let { coords ->
                 moveToLocation(mapView, coords.toPoint())
                 drawPlacemark(coords.toPoint(), mapObjects)
@@ -72,7 +79,6 @@ class BottomSheetDialogMapFragment() : BottomSheetDialogFragment() {
                 //bottomSheetDialogMap.moveToDefaultLocation(this)
             }
         }
-
 
         binding.btOk.apply {
             isVisible = arguments?.getBoolean("isEdit") ?: false

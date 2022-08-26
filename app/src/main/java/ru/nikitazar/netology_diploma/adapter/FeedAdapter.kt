@@ -19,7 +19,7 @@ interface FeedOnInteractionListener {
     fun onLike(post: Post)
     fun onEdit(post: Post)
     fun onRemove(post: Post)
-    fun onMap(coords: Coords)
+    fun onMap(post: Post)
     fun onFullscreenAttachment(attachmentUrl: String)
 }
 
@@ -97,10 +97,10 @@ class PostViewHolder(
                 onInteractionListener.onLike(post)
             }
 
-            post.coords?.let { _coords ->
-                coords.isVisible = true
+            post.let { post ->
+                coords.isVisible = post.coords != null
                 coords.setOnClickListener {
-                    onInteractionListener.onMap(_coords)
+                    onInteractionListener.onMap(post)
                 }
             }
         }

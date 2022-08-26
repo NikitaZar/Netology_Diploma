@@ -41,7 +41,7 @@ private val empty = Post(
     authorAvatar = "",
     content = "",
     published = "",
-    coords = Coords(0F, 0F),
+    coords = null,
     link = null,
     mentionIds = emptyList(),
     mentionedMe = false,
@@ -74,10 +74,9 @@ class EditPostFragment : Fragment() {
         var post = empty
         bind(post, binding)
 
-        arguments?.longArg?.let { id -> postVewModel.getById(id) }
-        postVewModel.postById.observe(viewLifecycleOwner) { postById ->
-            post = postById
-            bind(postById, binding)
+        postVewModel.edited.observe(viewLifecycleOwner) { editedPost ->
+            post = editedPost
+            bind(editedPost, binding)
         }
 
         val pickPhotoLauncher =
@@ -154,9 +153,14 @@ class EditPostFragment : Fragment() {
         }
 
         binding.takeCoords.setOnClickListener {
+            Log.i("coords", post.toString())
             findNavController().navigate(
                 R.id.action_editPostFragment_to_bottomSheetDialogMapFragment,
-                Bundle().apply { putBoolean("isEdit", true) }
+                Bundle().apply {
+                    putBoolean("isEdit", true)
+                    Log.i("mapView", "postSrc: $post") //TODO debug
+                    longArg = post.id
+                }
             )
         }
 

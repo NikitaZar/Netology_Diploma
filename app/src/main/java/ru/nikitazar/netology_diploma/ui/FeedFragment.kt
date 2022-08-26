@@ -38,39 +38,8 @@ class FeedFragment : Fragment() {
     private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val authViewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
-    private lateinit var mapKit: MapKit
-    private var coords: Coords? = null
-    private lateinit var mapObjects: MapObjectCollection
-
-    private val inputListener = object : InputListener {
-        override fun onMapTap(map: Map, point: Point) {
-            //nothing to do
-        }
-
-        override fun onMapLongTap(map: Map, point: Point) {
-            coords = point.toCoords()
-            drawPlacemark(point, mapObjects)
-        }
-    }
-
     @Inject
     lateinit var appAuth: AppAuth
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        MapKitFactory.initialize(context)
-        mapKit = MapKitFactory.getInstance()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-    }
-
-    override fun onStop() {
-        MapKitFactory.getInstance().onStop()
-        super.onStop()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -103,10 +72,13 @@ class FeedFragment : Fragment() {
                     postViewModel.removeById(post.id)
                 }
 
-                override fun onMap(coords: Coords) {
+                override fun onMap(post: Post) {
                     findNavController().navigate(
                         R.id.action_feedFragment_to_bottomSheetDialogMapFragment,
-                        Bundle().apply { putBoolean("isEdit", false) }
+                        Bundle().apply {
+                            putBoolean("isEdit", false)
+                            longArg = post.id
+                        }
                     )
                 }
 
@@ -139,9 +111,7 @@ class FeedFragment : Fragment() {
         postViewModel.edited.observe(viewLifecycleOwner) { post ->
             adapter.refresh()
             if (post.id != 0L) {
-                findNavController().navigate(
-                    R.id.action_feedFragment_to_editPostFragment,
-                    Bundle().apply { longArg = post.id })
+                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment)
             }
         }
 
