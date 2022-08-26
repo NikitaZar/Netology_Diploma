@@ -104,24 +104,10 @@ class FeedFragment : Fragment() {
                 }
 
                 override fun onMap(coords: Coords) {
-                    BottomSheetDialogMap(
-                        binding.root.context,
-                        R.style.BottomSheetDialogThem,
-                        R.id.bottom_sheet_map,
-                        R.layout.layout_bottom_sheet_map,
-                        view,
-                        R.id.mapview,
-                        inputListener,
-                        R.id.bt_ok,
-                        R.id.bt_delete,
-                        viewLifecycleOwner,
-                        false
-                    ).apply {
-                        moveToLocation(coords)
-                        drawPlacemark(coords)
-                    }.also { map ->
-                        mapObjects = map.mapObjects
-                    }
+                    findNavController().navigate(
+                        R.id.action_feedFragment_to_bottomSheetDialogMapFragment,
+                        Bundle().apply { putBoolean("isEdit", false) }
+                    )
                 }
 
                 override fun onFullscreenAttachment(attachmentUrl: String) {

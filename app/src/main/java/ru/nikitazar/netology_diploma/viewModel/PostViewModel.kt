@@ -169,7 +169,7 @@ class PostViewModel @Inject constructor(
         _photo.value = PhotoModel(uri, file)
     }
 
-    fun changeCoords(coords: Coords) = viewModelScope.launch {
+    fun changeCoords(coords: Coords?) = viewModelScope.launch {
         edited.value = edited.value?.copy(coords = coords)
     }
 

@@ -3,6 +3,7 @@ package ru.nikitazar.netology_diploma.ui
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,21 +53,6 @@ private val empty = Post(
 @AndroidEntryPoint
 class EditPostFragment : Fragment() {
 
-    private lateinit var mapKit: MapKit
-    private var coords: Coords? = null
-    private lateinit var mapObjects: MapObjectCollection
-
-    private val inputListener = object : InputListener {
-        override fun onMapTap(map: Map, point: Point) {
-            //nothing to do
-        }
-
-        override fun onMapLongTap(map: Map, point: Point) {
-            coords = point.toCoords()
-            drawPlacemark(point, mapObjects)
-        }
-    }
-
     private val postVewModel: PostViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
@@ -74,12 +60,6 @@ class EditPostFragment : Fragment() {
     private val authViewModel: AuthViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        MapKitFactory.initialize(context)
-        mapKit = MapKitFactory.getInstance()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,10 +75,9 @@ class EditPostFragment : Fragment() {
         bind(post, binding)
 
         arguments?.longArg?.let { id -> postVewModel.getById(id) }
-        postVewModel.postById.observe(viewLifecycleOwner) {
-            post = it
-            coords = post.coords
-            bind(it, binding)
+        postVewModel.postById.observe(viewLifecycleOwner) { postById ->
+            post = postById
+            bind(postById, binding)
         }
 
         val pickPhotoLauncher =
@@ -175,50 +154,13 @@ class EditPostFragment : Fragment() {
         }
 
         binding.takeCoords.setOnClickListener {
-            val bottomSheetDialogMap = BottomSheetDialogMap(
-                it.context,
-                R.style.BottomSheetDialogThem,
-                R.id.bottom_sheet_map,
-                R.layout.layout_bottom_sheet_map,
-                view,
-                R.id.mapview,
-                inputListener,
-                R.id.bt_ok,
-                R.id.bt_delete,
-                viewLifecycleOwner,
-                true
-            ).apply {
-                onChangeCoords {
-                    coords?.let { postVewModel.changeCoords(it) }
-                }
-                onDeleteCoords {
-                    coords = null
-                }
-            }.also { map ->
-                mapObjects = map.mapObjects
-            }
-
-            coords?.let {
-                bottomSheetDialogMap.apply {
-                    moveToLocation(it)
-                    drawPlacemark(it)
-                }
-            } ?: run {
-                //bottomSheetDialogMap.moveToDefaultLocation(this)
-            }
+            findNavController().navigate(
+                R.id.action_editPostFragment_to_bottomSheetDialogMapFragment,
+                Bundle().apply { putBoolean("isEdit", true) }
+            )
         }
 
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-    }
-
-    override fun onStop() {
-        MapKitFactory.getInstance().onStop()
-        super.onStop()
     }
 
     private fun bind(post: Post, binding: FragmentEditPostBinding) {
