@@ -208,4 +208,18 @@ class EventViewModel @Inject constructor(
     fun changeDt(dt: String) = viewModelScope.launch {
         edited.value = edited.value?.copy(datetime = dt)
     }
+
+    fun removeSpeakerById(id: Long) = viewModelScope.launch {
+        val speakerIds = edited.value?.speakerIds?.toMutableList()?.apply {
+            remove(id)
+        }?.toList() ?: emptyList()
+        edited.value = edited.value?.copy(speakerIds = speakerIds)
+    }
+
+    fun addSpeakerById(id: Long) = viewModelScope.launch {
+        val speakerIds = edited.value?.speakerIds?.toMutableList()?.apply {
+            add(id)
+        }?.toList() ?: emptyList()
+        edited.value = edited.value?.copy(speakerIds = speakerIds)
+    }
 }

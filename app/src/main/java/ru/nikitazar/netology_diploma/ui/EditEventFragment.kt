@@ -91,39 +91,28 @@ class EditEventFragment : Fragment() {
     ): View {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-        var event = empty
-        val speakerIdsData = MutableLiveData(emptyList<Long>())
+        val speakersAdapter = UserHorizontalAdapter(object : UserOnInteractionListener {
+            override fun onRemove(id: Long) {
+                eventVewModel.removeSpeakerById(id)
+            }
+        })
 
+        var event = empty
         eventVewModel.edited.observe(viewLifecycleOwner) {
             event = it
-            speakerIdsData.postValue(event.speakerIds)
+            val speakers = userViewModel.data.value?.filter { user -> user.id in event.speakerIds }
+            speakersAdapter.submitList(speakers)
             bind(event, binding)
         }
 
-        var users = userViewModel.data.value ?: emptyList()
-        val speakersSpinner = binding.speakersSpinner
         userViewModel.data.observe(viewLifecycleOwner) {
-            users = it
-            Log.i("users", users.toString())
-            val speakersSpinnerAdapter = UserSpinnerAdapter(users, speakersSpinner.context)
-            speakersSpinner.adapter = speakersSpinnerAdapter
+            val users = it
+            val speakersSpinnerAdapter = UserSpinnerAdapter(users, binding.root.context)
+            binding.speakersSpinner.adapter = speakersSpinnerAdapter
         }
         var newSpeakerId = 0L
-        val speakersAdapter = UserHorizontalAdapter(object : UserOnInteractionListener {
-            override fun onRemove(id: Long) {
-                val speakerIds = event.speakerIds.toMutableList()
-                speakerIds.remove(id)
-                speakerIdsData.postValue(speakerIds)
-            }
-        })
-        binding.speakersList.adapter = speakersAdapter
 
-        speakerIdsData.observe(viewLifecycleOwner) { speakerIds ->
-            val speakers = users.filter { user -> user.id in speakerIds }
-            speakersAdapter.submitList(speakers)
-            event = event.copy(speakerIds = speakerIds)
-            Log.i("speakerIds", speakerIds.toString())
-        }
+        binding.speakersList.adapter = speakersAdapter
 
         val formatSpinner = binding.formatSpinner
         formatSpinner.onItemSelectedListener = object : OnItemSelectedListener {
@@ -144,20 +133,18 @@ class EditEventFragment : Fragment() {
             )
         }
 
-        speakersSpinner.onItemSelectedListener = object : OnItemSelectedListener {
+        binding.speakersSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
-                newSpeakerId = users[i].id
+                newSpeakerId = userViewModel.data.value?.get(i)?.id ?: 0L
             }
-
             override fun onNothingSelected(adapterView: AdapterView<*>?) = Unit
         }
 
         binding.btSpeakersAdd.setOnClickListener {
             val speakerIds = event.speakerIds.toMutableList()
             if (!speakerIds.contains(newSpeakerId)) {
-                speakerIds.add(newSpeakerId)
+                eventVewModel.addSpeakerById(newSpeakerId)
             }
-            speakerIdsData.postValue(speakerIds)
         }
 
         binding.takeCoords.setOnClickListener {
@@ -254,6 +241,8 @@ class EditEventFragment : Fragment() {
     private fun bind(event: Event, binding: FragmentEditEventBinding) {
         with(binding) {
             content.setText(event.content)
+            link.setText(event.link)
+            dt.setText(event.datetime)
 
             try {
                 val formatterGetDt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -268,8 +257,6 @@ class EditEventFragment : Fragment() {
             } catch (e: ParseException) {
                 Log.e("EditEventFragment", e.message.toString())
             }
-
-            link.setText(event.link)
 
             event.attachment?.let { attachment ->
                 when (attachment.type) {
