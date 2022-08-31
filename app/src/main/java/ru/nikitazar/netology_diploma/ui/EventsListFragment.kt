@@ -110,25 +110,14 @@ class EventsListFragment : Fragment() {
                     }
                 }
 
-                override fun onMap(coords: Coords) {
-                    BottomSheetDialogMap(
-                        binding.root.context,
-                        R.style.BottomSheetDialogThem,
-                        R.id.bottom_sheet_map,
-                        R.layout.layout_bottom_sheet_map,
-                        view,
-                        R.id.mapview,
-                        inputListener,
-                        R.id.bt_ok,
-                        R.id.bt_delete,
-                        viewLifecycleOwner,
-                        false
-                    ).apply {
-                        moveToLocation(coords)
-                        drawPlacemark(coords)
-                    }.also { map ->
-                        mapObjects = map.mapObjects
-                    }
+                override fun onMap(event: Event) {
+                    findNavController().navigate(
+                        R.id.action_eventsListFragment_to_bottomSheetDialogEventMapFragment,
+                        Bundle().apply {
+                            putBoolean("isEdit", false)
+                            longArg = event.id
+                        }
+                    )
                 }
 
                 override fun onFullscreenAttachment(attachmentUrl: String) {

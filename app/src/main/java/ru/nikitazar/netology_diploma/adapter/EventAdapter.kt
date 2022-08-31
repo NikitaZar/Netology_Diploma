@@ -22,7 +22,7 @@ interface EventOnInteractionListener {
     fun onEdit(event: Event)
     fun onRemove(event: Event)
     fun onJoin(event: Event)
-    fun onMap(coords: Coords)
+    fun onMap(event: Event)
     fun onFullscreenAttachment(attachmentUrl: String)
 }
 
@@ -105,10 +105,10 @@ class EventViewHolder(
                 }
             }
 
-            navigate.isVisible = event.coords != null
-            navigate.setOnClickListener {
-                event.coords?.let {
-                    onInteractionListener.onMap(it)
+            event.let {
+                coords.isVisible = it.coords != null
+                coords.setOnClickListener {
+                    onInteractionListener.onMap(event)
                 }
             }
 

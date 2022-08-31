@@ -2,31 +2,29 @@ package ru.nikitazar.netology_diploma.ui
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.button.MaterialButton
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.MapObjectCollection
-import ru.nikitazar.netology_diploma.R
-import ru.nikitazar.netology_diploma.databinding.FragmentBottomSheetDialogMapBinding
+import ru.nikitazar.netology_diploma.databinding.FragmentBottomSheetDialogPostMapBinding
 import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
-import ru.nikitazar.netology_diploma.utils.*
+import ru.nikitazar.netology_diploma.utils.attachToLifecycle
+import ru.nikitazar.netology_diploma.utils.drawPlacemark
+import ru.nikitazar.netology_diploma.utils.moveToLocation
+import ru.nikitazar.netology_diploma.utils.toCoords
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 
 
-class BottomSheetDialogMapFragment() : BottomSheetDialogFragment() {
+class BottomSheetDialogPostMapFragment() : BottomSheetDialogFragment() {
 
     private val postVewModel: PostViewModel by viewModels(
         ownerProducer = ::requireParentFragment
@@ -59,7 +57,7 @@ class BottomSheetDialogMapFragment() : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding = FragmentBottomSheetDialogMapBinding.inflate(inflater, container, false)
+        val binding = FragmentBottomSheetDialogPostMapBinding.inflate(inflater, container, false)
 
         val mapView = binding.mapview.apply {
             attachToLifecycle(viewLifecycleOwner)

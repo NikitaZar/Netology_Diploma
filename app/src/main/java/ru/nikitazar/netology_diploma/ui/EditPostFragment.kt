@@ -155,7 +155,7 @@ class EditPostFragment : Fragment() {
         binding.takeCoords.setOnClickListener {
             Log.i("coords", post.toString())
             findNavController().navigate(
-                R.id.action_editPostFragment_to_bottomSheetDialogMapFragment,
+                R.id.action_editPostFragment_to_bottomSheetDialogPostMapFragment,
                 Bundle().apply {
                     putBoolean("isEdit", true)
                     Log.i("mapView", "postSrc: $post") //TODO debug

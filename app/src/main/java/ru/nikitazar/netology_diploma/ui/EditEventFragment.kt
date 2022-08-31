@@ -211,40 +211,14 @@ class EditEventFragment : Fragment() {
         }
 
         binding.takeCoords.setOnClickListener {
-            val bottomSheetDialogMap = BottomSheetDialogMap(
-                it.context,
-                R.style.BottomSheetDialogThem,
-                R.id.bottom_sheet_map,
-                R.layout.layout_bottom_sheet_map,
-                view,
-                R.id.mapview,
-                inputListener,
-                R.id.bt_ok,
-                R.id.bt_delete,
-                viewLifecycleOwner,
-                true
-            ).apply {
-                onChangeCoords {
-                    coords?.let {
-                        eventVewModel.changeCoords(it)
-                        event = event.copy(coords = it)
-                    }
+            findNavController().navigate(
+                R.id.action_editEventFragment_to_bottomSheetDialogEventMapFragment,
+                Bundle().apply {
+                    putBoolean("isEdit", true)
+                    Log.i("mapView", "eventSrc: $event") //TODO debug
+                    longArg = event.id
                 }
-                onDeleteCoords {
-                    coords = null
-                }
-            }.also { map ->
-                mapObjects = map.mapObjects
-            }
-
-            coords?.let {
-                bottomSheetDialogMap.apply {
-                    moveToLocation(it)
-                    drawPlacemark(it)
-                }
-            } ?: run {
-                //bottomSheetDialogMap.moveToDefaultLocation(this)
-            }
+            )
         }
 
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {

@@ -74,7 +74,7 @@ class FeedFragment : Fragment() {
 
                 override fun onMap(post: Post) {
                     findNavController().navigate(
-                        R.id.action_feedFragment_to_bottomSheetDialogMapFragment,
+                        R.id.action_feedFragment_to_bottomSheetDialogPostMapFragment,
                         Bundle().apply {
                             putBoolean("isEdit", false)
                             longArg = post.id
