@@ -25,6 +25,12 @@ import com.github.dhaval2404.imagepicker.constant.ImageProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObjectCollection
 import dagger.hilt.android.AndroidEntryPoint
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.adapter.UserHorizontalAdapter
@@ -37,10 +43,13 @@ import ru.nikitazar.netology_diploma.dto.Event
 import ru.nikitazar.netology_diploma.dto.EventType
 import ru.nikitazar.netology_diploma.utils.AndroidUtils
 import ru.nikitazar.netology_diploma.utils.LongArg
+import ru.nikitazar.netology_diploma.utils.drawPlacemark
+import ru.nikitazar.netology_diploma.utils.toCoords
 import ru.nikitazar.netology_diploma.view.load
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.EventViewModel
 import ru.nikitazar.netology_diploma.viewModel.UserViewModel
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -71,9 +80,6 @@ class EditEventFragment : Fragment() {
         var Bundle.longArg: Long? by LongArg
     }
 
-    @Inject
-    lateinit var calendar: Calendar
-
     private val eventVewModel: EventViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val userViewModel: UserViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val authViewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
@@ -85,41 +91,28 @@ class EditEventFragment : Fragment() {
     ): View {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
-        var event = empty
-        arguments?.longArg?.let { id -> eventVewModel.getById(id) }
-        bind(event, binding)
-
-        val speakerIdsData = MutableLiveData(emptyList<Long>())
-        eventVewModel.eventById.observe(viewLifecycleOwner) {
-            event = it
-            speakerIdsData.postValue(event.speakerIds)
-            bind(it, binding)
-        }
-
-        var users = userViewModel.data.value ?: emptyList()
-        val speakersSpinner = binding.speakersSpinner
-        userViewModel.data.observe(viewLifecycleOwner) {
-            users = it
-            Log.i("users", users.toString())
-            val speakersSpinnerAdapter = UserSpinnerAdapter(users, speakersSpinner.context)
-            speakersSpinner.adapter = speakersSpinnerAdapter
-        }
-        var newSpeakerId = 0L
         val speakersAdapter = UserHorizontalAdapter(object : UserOnInteractionListener {
             override fun onRemove(id: Long) {
-                val speakerIds = event.speakerIds.toMutableList()
-                speakerIds.remove(id)
-                speakerIdsData.postValue(speakerIds)
+                eventVewModel.removeSpeakerById(id)
             }
         })
-        binding.speakersList.adapter = speakersAdapter
 
-        speakerIdsData.observe(viewLifecycleOwner) { speakerIds ->
-            val speakers = users.filter { user -> user.id in speakerIds }
+        var event = empty
+        eventVewModel.edited.observe(viewLifecycleOwner) {
+            event = it
+            val speakers = userViewModel.data.value?.filter { user -> user.id in event.speakerIds }
             speakersAdapter.submitList(speakers)
-            event = event.copy(speakerIds = speakerIds)
-            Log.i("speakerIds", speakerIds.toString())
+            bind(event, binding)
         }
+
+        userViewModel.data.observe(viewLifecycleOwner) {
+            val users = it
+            val speakersSpinnerAdapter = UserSpinnerAdapter(users, binding.root.context)
+            binding.speakersSpinner.adapter = speakersSpinnerAdapter
+        }
+        var newSpeakerId = 0L
+
+        binding.speakersList.adapter = speakersAdapter
 
         val formatSpinner = binding.formatSpinner
         formatSpinner.onItemSelectedListener = object : OnItemSelectedListener {
@@ -127,51 +120,42 @@ class EditEventFragment : Fragment() {
                 val format = formatSpinner.selectedItem.toString()
                 event = event.copy(type = EventType.valueOf(format))
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) = Unit
         }
 
         binding.dt.setOnClickListener {
-            val bottomSheetDialog = BottomSheetDialog(it.context, R.style.BottomSheetDialogThem)
-            val bottomSheetViewRoot = view?.findViewById<LinearLayout>(R.id.bottom_sheet_calendar)
-            val bottomSheetView = LayoutInflater.from(context).inflate(R.layout.layout_bottom_sheet_dt, bottomSheetViewRoot)
-            val timePicker = bottomSheetView.findViewById<TimePicker>(R.id.time_picker)
-            timePicker.setIs24HourView(DateFormat.is24HourFormat(context))
-            val datePicker = bottomSheetView.findViewById<DatePicker>(R.id.date_picker)
-
-            bottomSheetView.findViewById<MaterialButton>(R.id.bt_ok).setOnClickListener {
-                calendar.set(Calendar.HOUR, timePicker.hour)
-                calendar.set(Calendar.MINUTE, timePicker.minute)
-                calendar.set(Calendar.DAY_OF_MONTH, datePicker.dayOfMonth)
-                calendar.set(Calendar.MONTH, datePicker.month)
-                calendar.set(Calendar.YEAR, datePicker.year)
-                val datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(calendar.time).toString()
-                val formatView = SimpleDateFormat("yyyy-MM-dd HH:mm").format(calendar.time).toString()
-                binding.dt.setText(formatView)
-                event = event.copy(datetime = datetime)
-                bottomSheetDialog.dismiss()
-            }
-            bottomSheetDialog.setContentView(bottomSheetView)
-            bottomSheetDialog.show()
+            findNavController().navigate(
+                R.id.action_editEventFragment_to_bottomSheetDialogTakeDtFragment,
+                Bundle().apply {
+                    longArg = event.id
+                }
+            )
         }
 
-        speakersSpinner.onItemSelectedListener = object : OnItemSelectedListener {
+        binding.speakersSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
-                newSpeakerId = users[i].id
+                newSpeakerId = userViewModel.data.value?.get(i)?.id ?: 0L
             }
-
             override fun onNothingSelected(adapterView: AdapterView<*>?) = Unit
         }
 
         binding.btSpeakersAdd.setOnClickListener {
             val speakerIds = event.speakerIds.toMutableList()
             if (!speakerIds.contains(newSpeakerId)) {
-                speakerIds.add(newSpeakerId)
+                eventVewModel.addSpeakerById(newSpeakerId)
             }
-            speakerIdsData.postValue(speakerIds)
         }
 
         binding.takeCoords.setOnClickListener {
-            //TODO open MapView
+            findNavController().navigate(
+                R.id.action_editEventFragment_to_bottomSheetDialogEventMapFragment,
+                Bundle().apply {
+                    putBoolean("isEdit", true)
+                    Log.i("mapView", "eventSrc: $event") //TODO debug
+                    longArg = event.id
+                }
+            )
         }
 
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
@@ -257,8 +241,23 @@ class EditEventFragment : Fragment() {
     private fun bind(event: Event, binding: FragmentEditEventBinding) {
         with(binding) {
             content.setText(event.content)
-            dt.setText(event.datetime)
             link.setText(event.link)
+            dt.setText(event.datetime)
+
+            try {
+                val formatterGetDt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                val formatterSetDt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                when (event.datetime.isNotEmpty()) {
+                    true -> {
+                        val dtFormated = formatterGetDt.parse(event.datetime)
+                        dt.setText(formatterSetDt.format(dtFormated as Date))
+                    }
+                    false -> Unit
+                }
+            } catch (e: ParseException) {
+                Log.e("EditEventFragment", e.message.toString())
+            }
+
             event.attachment?.let { attachment ->
                 when (attachment.type) {
                     AttachmentType.IMAGE -> photo.load(event.attachment.url)

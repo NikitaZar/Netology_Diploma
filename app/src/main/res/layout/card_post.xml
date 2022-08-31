@@ -5,6 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <View
+        android:layout_width="wrap_content"
+        android:background="@drawable/item_separator"
+        android:layout_height="3dp" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -93,7 +98,7 @@
             app:barrierDirection="bottom"
             app:constraint_referenced_ids="attachment" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -106,6 +111,7 @@
                 style="@style/Widget.AppTheme.LikeCheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
                 android:checkable="true"
                 app:icon="@drawable/ic_like_24dp" />
 
@@ -113,8 +119,20 @@
                 android:id="@+id/likeCnt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/like"
+                android:layout_toEndOf="@id/like"
                 tools:text="1000" />
 
-        </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/coords"
+                style="@style/Widget.AppTheme.LikeCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/like"
+                android:layout_alignParentEnd="true"
+                android:visibility="gone"
+                app:icon="@drawable/ic_baseline_location_on_24" />
+        </RelativeLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

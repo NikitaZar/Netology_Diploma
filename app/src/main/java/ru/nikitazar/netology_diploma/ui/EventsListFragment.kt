@@ -1,16 +1,20 @@
 package ru.nikitazar.netology_diploma.ui
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObjectCollection
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.adapter.EventAdapter
@@ -19,9 +23,9 @@ import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.FragmentEventsListBinding
 import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Event
-import ru.nikitazar.netology_diploma.dto.User
 import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
-import ru.nikitazar.netology_diploma.ui.EditPostFragment.Companion.textArg
+import ru.nikitazar.netology_diploma.utils.drawPlacemark
+import ru.nikitazar.netology_diploma.utils.toCoords
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.EventViewModel
 import ru.nikitazar.netology_diploma.viewModel.UserViewModel
@@ -34,8 +38,39 @@ class EventsListFragment : Fragment() {
     private val userViewModel: UserViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val authViewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
+    private lateinit var mapKit: MapKit
+    private var coords: Coords? = null
+    private lateinit var mapObjects: MapObjectCollection
+
+    private val inputListener = object : InputListener {
+        override fun onMapTap(map: Map, point: Point) {
+            //nothing to do
+        }
+
+        override fun onMapLongTap(map: Map, point: Point) {
+            coords = point.toCoords()
+            drawPlacemark(point, mapObjects)
+        }
+    }
+
     @Inject
     lateinit var appAuth: AppAuth
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        MapKitFactory.initialize(context)
+        mapKit = MapKitFactory.getInstance()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+    }
+
+    override fun onStop() {
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,8 +110,14 @@ class EventsListFragment : Fragment() {
                     }
                 }
 
-                override fun onMap(coords: Coords) {
-                    //TODO("Not yet implemented")
+                override fun onMap(event: Event) {
+                    findNavController().navigate(
+                        R.id.action_eventsListFragment_to_bottomSheetDialogEventMapFragment,
+                        Bundle().apply {
+                            putBoolean("isEdit", false)
+                            longArg = event.id
+                        }
+                    )
                 }
 
                 override fun onFullscreenAttachment(attachmentUrl: String) {
@@ -103,9 +144,7 @@ class EventsListFragment : Fragment() {
         eventViewModel.edited.observe(viewLifecycleOwner) { event ->
             adapter.refresh()
             if (event.id != 0L) {
-                findNavController().navigate(
-                    R.id.action_eventsListFragment_to_editEventFragment,
-                    Bundle().apply { longArg = event.id })
+                findNavController().navigate(R.id.action_eventsListFragment_to_editEventFragment)
             }
         }
 

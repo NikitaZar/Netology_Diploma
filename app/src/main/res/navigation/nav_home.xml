@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_feedFragment_to_eventsListFragment"
             app:destination="@id/eventsListFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_bottomSheetDialogPostMapFragment"
+            app:destination="@id/bottomSheetDialogPostMapFragment" />
     </fragment>
     <fragment
         android:id="@+id/eventsListFragment"
@@ -25,15 +28,44 @@
         <action
             android:id="@+id/action_eventsListFragment_to_editEventFragment"
             app:destination="@id/editEventFragment" />
+        <action
+            android:id="@+id/action_eventsListFragment_to_bottomSheetDialogEventMapFragment"
+            app:destination="@id/bottomSheetDialogEventMapFragment" />
     </fragment>
     <fragment
         android:id="@+id/editPostFragment"
         android:name="ru.nikitazar.netology_diploma.ui.EditPostFragment"
         android:label="@string/fragment_edit_post"
-        tools:layout="@layout/fragment_edit_post" />
+        tools:layout="@layout/fragment_edit_post" >
+        <action
+            android:id="@+id/action_editPostFragment_to_bottomSheetDialogPostMapFragment"
+            app:destination="@id/bottomSheetDialogPostMapFragment" />
+    </fragment>
     <fragment
         android:id="@+id/editEventFragment"
         android:name="ru.nikitazar.netology_diploma.ui.EditEventFragment"
         android:label="@string/editEventFragment"
-        tools:layout="@layout/fragment_edit_event" />
+        tools:layout="@layout/fragment_edit_event" >
+        <action
+            android:id="@+id/action_editEventFragment_to_bottomSheetDialogEventMapFragment"
+            app:destination="@id/bottomSheetDialogEventMapFragment" />
+        <action
+            android:id="@+id/action_editEventFragment_to_bottomSheetDialogTakeDtFragment"
+            app:destination="@id/bottomSheetDialogTakeDtFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/bottomSheetDialogEventMapFragment"
+        android:name="ru.nikitazar.netology_diploma.ui.BottomSheetDialogEventMapFragment"
+        android:label="fragment_bottom_sheet_dialog_event_map"
+        tools:layout="@layout/fragment_bottom_sheet_dialog_event_map" />
+    <dialog
+        android:id="@+id/bottomSheetDialogPostMapFragment"
+        android:name="ru.nikitazar.netology_diploma.ui.BottomSheetDialogPostMapFragment"
+        android:label="fragment_bottom_sheet_dialog_post_map"
+        tools:layout="@layout/fragment_bottom_sheet_dialog_post_map" />
+    <dialog
+        android:id="@+id/bottomSheetDialogTakeDtFragment"
+        android:name="ru.nikitazar.netology_diploma.ui.BottomSheetDialogTakeDtFragment"
+        android:label="fragment_bottom_sheet_dialog_take_dt"
+        tools:layout="@layout/fragment_bottom_sheet_dialog_take_dt" />
 </navigation>

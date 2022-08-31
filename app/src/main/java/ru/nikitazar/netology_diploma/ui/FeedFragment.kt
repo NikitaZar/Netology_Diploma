@@ -10,6 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.yandex.mapkit.MapKit
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObjectCollection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.nikitazar.netology_diploma.R
@@ -17,8 +23,11 @@ import ru.nikitazar.netology_diploma.adapter.FeedAdapter
 import ru.nikitazar.netology_diploma.adapter.FeedOnInteractionListener
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.FragmentFeedBinding
+import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Post
-import ru.nikitazar.netology_diploma.ui.EditPostFragment.Companion.textArg
+import ru.nikitazar.netology_diploma.ui.EditEventFragment.Companion.longArg
+import ru.nikitazar.netology_diploma.utils.drawPlacemark
+import ru.nikitazar.netology_diploma.utils.toCoords
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.PostViewModel
 import javax.inject.Inject
@@ -63,6 +72,16 @@ class FeedFragment : Fragment() {
                     postViewModel.removeById(post.id)
                 }
 
+                override fun onMap(post: Post) {
+                    findNavController().navigate(
+                        R.id.action_feedFragment_to_bottomSheetDialogPostMapFragment,
+                        Bundle().apply {
+                            putBoolean("isEdit", false)
+                            longArg = post.id
+                        }
+                    )
+                }
+
                 override fun onFullscreenAttachment(attachmentUrl: String) {
                     //TODO
                 }
@@ -81,7 +100,7 @@ class FeedFragment : Fragment() {
 
             if (dataState.error) {
                 Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.ok){}.show()
+                    .setAction(R.string.ok) {}.show()
             }
         }
 
@@ -92,9 +111,7 @@ class FeedFragment : Fragment() {
         postViewModel.edited.observe(viewLifecycleOwner) { post ->
             adapter.refresh()
             if (post.id != 0L) {
-                findNavController().navigate(
-                    R.id.action_feedFragment_to_editPostFragment,
-                    Bundle().apply { textArg = post.content }) //TODO
+                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment)
             }
         }
 

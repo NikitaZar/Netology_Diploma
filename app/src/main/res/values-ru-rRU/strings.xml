@@ -43,4 +43,11 @@
     <string name="eventsListFragment">События</string>
     <string name="fragment_edit_post">Редактор поста</string>
     <string name="editEventFragment">Редактор события</string>
+    <string name="create">Создать</string>
+    <string name="cancel">Отмена</string>
+    <string name="create_marker">Создать точку</string>
+    <string name="latitude">Широта</string>
+    <string name="longitude">Долгота</string>
+    <string name="delete">Удалить</string>
+
 </resources>

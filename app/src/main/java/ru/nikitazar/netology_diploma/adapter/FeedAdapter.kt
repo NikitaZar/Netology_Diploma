@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.nikitazar.netology_diploma.R
 import ru.nikitazar.netology_diploma.auth.AppAuth
 import ru.nikitazar.netology_diploma.databinding.CardPostBinding
+import ru.nikitazar.netology_diploma.dto.Coords
 import ru.nikitazar.netology_diploma.dto.Post
 import ru.nikitazar.netology_diploma.view.load
 import ru.nikitazar.netology_diploma.view.loadCircleCrop
@@ -18,6 +19,7 @@ interface FeedOnInteractionListener {
     fun onLike(post: Post)
     fun onEdit(post: Post)
     fun onRemove(post: Post)
+    fun onMap(post: Post)
     fun onFullscreenAttachment(attachmentUrl: String)
 }
 
@@ -93,6 +95,13 @@ class PostViewHolder(
 
             like.setOnClickListener {
                 onInteractionListener.onLike(post)
+            }
+
+            post.let { post ->
+                coords.isVisible = post.coords != null
+                coords.setOnClickListener {
+                    onInteractionListener.onMap(post)
+                }
             }
         }
     }

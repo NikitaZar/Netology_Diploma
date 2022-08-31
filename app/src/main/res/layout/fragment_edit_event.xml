@@ -175,7 +175,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="@dimen/space2x"
                 android:padding="@dimen/common_spacing"
-                app:icon="@drawable/ic_baseline_near_me_24" />
+                app:icon="@drawable/ic_baseline_location_on_24" />
 
         </RelativeLayout>
     </com.google.android.material.bottomappbar.BottomAppBar>

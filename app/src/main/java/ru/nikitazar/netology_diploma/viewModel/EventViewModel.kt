@@ -199,6 +199,27 @@ class EventViewModel @Inject constructor(
         } catch (e: DbError) {
             Log.e("getById", id.toString())
         }
+    }
 
+    fun changeCoords(coords: Coords?) = viewModelScope.launch {
+        edited.value = edited.value?.copy(coords = coords)
+    }
+
+    fun changeDt(dt: String) = viewModelScope.launch {
+        edited.value = edited.value?.copy(datetime = dt)
+    }
+
+    fun removeSpeakerById(id: Long) = viewModelScope.launch {
+        val speakerIds = edited.value?.speakerIds?.toMutableList()?.apply {
+            remove(id)
+        }?.toList() ?: emptyList()
+        edited.value = edited.value?.copy(speakerIds = speakerIds)
+    }
+
+    fun addSpeakerById(id: Long) = viewModelScope.launch {
+        val speakerIds = edited.value?.speakerIds?.toMutableList()?.apply {
+            add(id)
+        }?.toList() ?: emptyList()
+        edited.value = edited.value?.copy(speakerIds = speakerIds)
     }
 }
