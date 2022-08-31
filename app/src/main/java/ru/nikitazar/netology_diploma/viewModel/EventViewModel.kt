@@ -204,4 +204,8 @@ class EventViewModel @Inject constructor(
     fun changeCoords(coords: Coords?) = viewModelScope.launch {
         edited.value = edited.value?.copy(coords = coords)
     }
+
+    fun changeDt(dt: String) = viewModelScope.launch {
+        edited.value = edited.value?.copy(datetime = dt)
+    }
 }

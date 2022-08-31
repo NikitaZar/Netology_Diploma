@@ -49,6 +49,7 @@ import ru.nikitazar.netology_diploma.view.load
 import ru.nikitazar.netology_diploma.viewModel.AuthViewModel
 import ru.nikitazar.netology_diploma.viewModel.EventViewModel
 import ru.nikitazar.netology_diploma.viewModel.UserViewModel
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -79,43 +80,9 @@ class EditEventFragment : Fragment() {
         var Bundle.longArg: Long? by LongArg
     }
 
-    @Inject
-    lateinit var calendar: Calendar
-
     private val eventVewModel: EventViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val userViewModel: UserViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private val authViewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
-
-    private lateinit var mapKit: MapKit
-    private var coords: Coords? = null
-    private lateinit var mapObjects: MapObjectCollection
-
-    private val inputListener = object : InputListener {
-        override fun onMapTap(map: Map, point: Point) {
-            //nothing to do
-        }
-
-        override fun onMapLongTap(map: Map, point: Point) {
-            coords = point.toCoords()
-            drawPlacemark(point, mapObjects)
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        MapKitFactory.initialize(context)
-        mapKit = MapKitFactory.getInstance()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
-    }
-
-    override fun onStop() {
-        MapKitFactory.getInstance().onStop()
-        super.onStop()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -125,14 +92,12 @@ class EditEventFragment : Fragment() {
         val binding = FragmentEditEventBinding.inflate(inflater, container, false)
 
         var event = empty
-        arguments?.longArg?.let { id -> eventVewModel.getById(id) }
-        bind(event, binding)
-
         val speakerIdsData = MutableLiveData(emptyList<Long>())
-        eventVewModel.eventById.observe(viewLifecycleOwner) {
+
+        eventVewModel.edited.observe(viewLifecycleOwner) {
             event = it
             speakerIdsData.postValue(event.speakerIds)
-            bind(it, binding)
+            bind(event, binding)
         }
 
         var users = userViewModel.data.value ?: emptyList()
@@ -171,27 +136,12 @@ class EditEventFragment : Fragment() {
         }
 
         binding.dt.setOnClickListener {
-            val bottomSheetDialog = BottomSheetDialog(it.context, R.style.BottomSheetDialogThem)
-            val bottomSheetViewRoot = view?.findViewById<LinearLayout>(R.id.bottom_sheet_calendar)
-            val bottomSheetView = LayoutInflater.from(context).inflate(R.layout.layout_bottom_sheet_dt, bottomSheetViewRoot)
-            val timePicker = bottomSheetView.findViewById<TimePicker>(R.id.time_picker)
-            timePicker.setIs24HourView(DateFormat.is24HourFormat(context))
-            val datePicker = bottomSheetView.findViewById<DatePicker>(R.id.date_picker)
-
-            bottomSheetView.findViewById<MaterialButton>(R.id.bt_ok).setOnClickListener {
-                calendar.set(Calendar.HOUR, timePicker.hour)
-                calendar.set(Calendar.MINUTE, timePicker.minute)
-                calendar.set(Calendar.DAY_OF_MONTH, datePicker.dayOfMonth)
-                calendar.set(Calendar.MONTH, datePicker.month)
-                calendar.set(Calendar.YEAR, datePicker.year)
-                val datetime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(calendar.time).toString()
-                val formatView = SimpleDateFormat("yyyy-MM-dd HH:mm").format(calendar.time).toString()
-                binding.dt.setText(formatView)
-                event = event.copy(datetime = datetime)
-                bottomSheetDialog.dismiss()
-            }
-            bottomSheetDialog.setContentView(bottomSheetView)
-            bottomSheetDialog.show()
+            findNavController().navigate(
+                R.id.action_editEventFragment_to_bottomSheetDialogTakeDtFragment,
+                Bundle().apply {
+                    longArg = event.id
+                }
+            )
         }
 
         speakersSpinner.onItemSelectedListener = object : OnItemSelectedListener {
@@ -304,8 +254,23 @@ class EditEventFragment : Fragment() {
     private fun bind(event: Event, binding: FragmentEditEventBinding) {
         with(binding) {
             content.setText(event.content)
-            dt.setText(event.datetime)
+
+            try {
+                val formatterGetDt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                val formatterSetDt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                when (event.datetime.isNotEmpty()) {
+                    true -> {
+                        val dtFormated = formatterGetDt.parse(event.datetime)
+                        dt.setText(formatterSetDt.format(dtFormated as Date))
+                    }
+                    false -> Unit
+                }
+            } catch (e: ParseException) {
+                Log.e("EditEventFragment", e.message.toString())
+            }
+
             link.setText(event.link)
+
             event.attachment?.let { attachment ->
                 when (attachment.type) {
                     AttachmentType.IMAGE -> photo.load(event.attachment.url)

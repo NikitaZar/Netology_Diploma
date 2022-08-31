@@ -144,9 +144,7 @@ class EventsListFragment : Fragment() {
         eventViewModel.edited.observe(viewLifecycleOwner) { event ->
             adapter.refresh()
             if (event.id != 0L) {
-                findNavController().navigate(
-                    R.id.action_eventsListFragment_to_editEventFragment,
-                    Bundle().apply { longArg = event.id })
+                findNavController().navigate(R.id.action_eventsListFragment_to_editEventFragment)
             }
         }
 

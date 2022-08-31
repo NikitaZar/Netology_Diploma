@@ -49,6 +49,9 @@
         <action
             android:id="@+id/action_editEventFragment_to_bottomSheetDialogEventMapFragment"
             app:destination="@id/bottomSheetDialogEventMapFragment" />
+        <action
+            android:id="@+id/action_editEventFragment_to_bottomSheetDialogTakeDtFragment"
+            app:destination="@id/bottomSheetDialogTakeDtFragment" />
     </fragment>
     <dialog
         android:id="@+id/bottomSheetDialogEventMapFragment"
@@ -60,4 +63,9 @@
         android:name="ru.nikitazar.netology_diploma.ui.BottomSheetDialogPostMapFragment"
         android:label="fragment_bottom_sheet_dialog_post_map"
         tools:layout="@layout/fragment_bottom_sheet_dialog_post_map" />
+    <dialog
+        android:id="@+id/bottomSheetDialogTakeDtFragment"
+        android:name="ru.nikitazar.netology_diploma.ui.BottomSheetDialogTakeDtFragment"
+        android:label="fragment_bottom_sheet_dialog_take_dt"
+        tools:layout="@layout/fragment_bottom_sheet_dialog_take_dt" />
 </navigation>
